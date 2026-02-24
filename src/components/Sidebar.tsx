@@ -82,7 +82,7 @@ export function Sidebar({
       <div className="h-16 px-4 border-b border-[#e5e7eb] flex items-center justify-between">
         <div className="flex items-center justify-center ml-2 ">
           <img
-            src="/src/styles/LOGO/iwpa_logo.png"
+            src="/iwpa_logo.png"
             alt="IWPA"
             className="h-10.75 w-13.25"
           />

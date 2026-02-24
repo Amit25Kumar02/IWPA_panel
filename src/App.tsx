@@ -31,7 +31,7 @@ export default function App() {
   useEffect(() => {
     const root = document.documentElement;
     if (isAuthenticated) {
-      const savedTheme = localStorage.getItem('theme') || 'dark';
+      const savedTheme = localStorage.getItem('theme') || 'light';
       if (savedTheme === 'dark') {
         root.classList.add('dark');
       } else {
