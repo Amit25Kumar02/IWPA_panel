@@ -266,7 +266,7 @@ export default function RolesPermissions() {
   return (
     <div className="p-6 h-[calc(100vh-180px)]">
       {/* Desktop View */}
-      <div className="grid md:grid-cols-12 gap-8 h-full">
+      <div className="grid md:grid-cols-6 xl:grid-cols-12 gap-8 h-full">
         {/* Left Panel - Categories */}
         <div className="md:col-span-3">
           <Card className="h-full flex flex-col">
@@ -295,7 +295,7 @@ export default function RolesPermissions() {
                         backgroundColor: isSelected ? `${category.bgColor}40` : 'white',
                         borderColor: isSelected ? category.borderColor : theme.colors.gray[200],
                       }}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all border-2 hover:border-gray-300`}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all border-2 hover:border-gray-300 cursor-pointer`}
                     >
                       <div 
                         style={{ backgroundColor: category.bgColor }}
@@ -394,7 +394,7 @@ export default function RolesPermissions() {
                     <button
                       key={role.id}
                       onClick={() => handleRoleSelect(role)}
-                      className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+                      className={`w-full text-left p-4 rounded-lg border-2 transition-all cursor-pointer ${
                         selectedRole?.id === role.id
                           ? 'bg-opacity-5'
                           : 'bg-white hover:border-gray-300'

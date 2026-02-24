@@ -170,15 +170,15 @@ export default function Reporting() {
         </div>
 
         <div className="mt-4 flex gap-3 flex-wrap">
-          <button className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939]">
+          <button className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#1F7A4D] text-white rounded-lg cursor-pointer hover:bg-[#176939]">
             <BarChart3 className="w-5 h-5" />
             Generate Report
           </button>
-          <button className="inline-flex items-center gap-2 px-6 py-2.5 border border-[#e5e7eb] rounded-lg">
+          <button className="inline-flex items-center gap-2 px-6 py-2.5 border border-[#e5e7eb] rounded-lg cursor-pointer">
             <Download className="w-5 h-5" />
             Export to Excel
           </button>
-          <button className="inline-flex items-center gap-2 px-6 py-2.5 border border-[#e5e7eb] rounded-lg">
+          <button className="inline-flex items-center gap-2 px-6 py-2.5 border border-[#e5e7eb] rounded-lg cursor-pointer">
             <Download className="w-5 h-5" />
             Export to PDF
           </button>
@@ -211,11 +211,11 @@ export default function Reporting() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button className="inline-flex items-center gap-2 px-4 py-2 bg-[#1F7A4D] text-white rounded-lg text-sm">
+                  <button className="inline-flex items-center gap-2 px-4 py-2 bg-[#1F7A4D] text-white rounded-lg text-sm cursor-pointer">
                     <BarChart3 className="w-4 h-4" />
                     Generate
                   </button>
-                  <button className="p-2 border border-[#e5e7eb] rounded-lg">
+                  <button className="p-2 border border-[#e5e7eb] rounded-lg cursor-pointer">
                     <Download className="w-4 h-4" />
                   </button>
                 </div>

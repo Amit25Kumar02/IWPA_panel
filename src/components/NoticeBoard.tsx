@@ -113,7 +113,7 @@ export default function NoticeBoard() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`pb-3 text-sm font-medium relative ${activeTab === tab
+                className={`pb-3 text-sm font-medium relative cursor-pointer ${activeTab === tab
                   ? "text-[#1F7A4D]"
                   : "text-[#6a7282] hover:text-[#242424]"
                   }`}
@@ -209,10 +209,10 @@ export default function NoticeBoard() {
                     <td className="px-6 py-4 text-sm text-[#6a7282]">{notice.size}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <button className="p-2 hover:bg-green-50 rounded-lg text-[#1F7A4D] transition-colors">
+                        <button className="p-2 hover:bg-green-50 rounded-lg text-[#1F7A4D] transition-colors cursor-pointer">
                           <Eye className="w-5 h-5" />
                         </button>
-                        <button className="p-2 hover:bg-green-50 rounded-lg text-[#1F7A4D] transition-colors">
+                        <button className="p-2 hover:bg-green-50 rounded-lg text-[#1F7A4D] transition-colors cursor-pointer">
                           <Download className="w-5 h-5" />
                         </button>
                       </div>

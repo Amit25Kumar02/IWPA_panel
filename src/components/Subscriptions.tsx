@@ -136,7 +136,7 @@ export default function Subscriptions() {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((s) => (
-          <div key={s.label} className="bg-white rounded-lg border p-6">
+          <div key={s.label} className="bg-[#ffffff] rounded-lg border-[0.76px] border-[#e5e7eb] p-6">
             <div className="flex justify-between">
               <div>
                 <p className="text-sm text-[#6a7282]">{s.label}</p>
@@ -163,7 +163,7 @@ export default function Subscriptions() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search by company name, member ID, or subscription ID..."
-            className="w-full pl-10 pr-4 py-2.5 border rounded-lg"
+            className="w-full pl-10 pr-4 py-2.5 border-[0.76px] border-[#e5e7eb] rounded-lg"
           />
         </div>
 
@@ -172,7 +172,7 @@ export default function Subscriptions() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 border rounded-lg appearance-none"
+            className="w-full pl-10 pr-4 py-2.5 border-[0.76px] border-[#e5e7eb] rounded-lg appearance-none"
           >
             <option value="all">All Status</option>
             <option value="Active">Active</option>
@@ -182,7 +182,7 @@ export default function Subscriptions() {
           </select>
         </div>
 
-        <button className="flex items-center gap-2 px-4 py-2.5 border rounded-lg">
+        <button className="flex items-center gap-2 px-4 py-2.5 border-[0.76px] border-[#e5e7eb] rounded-lg cursor-pointer">
           <Download className="w-5 h-5" />
           Export
         </button>
@@ -190,9 +190,9 @@ export default function Subscriptions() {
 
       {/* Table */}
       <div className="grid grid-cols-1 gap-6">
-        <div className="bg-white border rounded-lg overflow-x-auto">
+        <div className="bg-[#ffffff] border-[0.76px] border-[#e5e7eb] rounded-lg overflow-x-auto">
           <table className="w-full ">
-            <thead className="bg-gray-50 border-b">
+            <thead className="bg-[#f9fafb] border-b-[0.76px] border-[#e5e7eb]">
               <tr>
                 {[
                   "Subscription ID",
@@ -204,7 +204,7 @@ export default function Subscriptions() {
                   "Payment",
                   "Actions",
                 ].map((h) => (
-                  <th key={h} className="px-6 py-4 text-left text-sm font-medium">
+                  <th key={h} className="px-6 py-4 text-left text-sm text-[#242424] font-medium">
                     {h}
                   </th>
                 ))}
@@ -218,18 +218,18 @@ export default function Subscriptions() {
 
                 return (
                   <tr key={s.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 font-mono text-sm">
+                    <td className="px-6 py-4 font-mono text-[#242424] text-sm">
                       {s.id}
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-[#6A7282]">
                         Member: {s.memberId}
                       </div>
                     </td>
-                    <td className="px-6 py-4 font-medium">{s.companyName}</td>
-                    <td className="px-6 py-4 text-xs bg-gray-100 rounded">
-                      {s.plan}
+                    <td className="px-6 py-4 text-[15px] text-[#242424] font-medium">{s.companyName}</td>
+                    <td className="px-6 py-4 text-xs  text-[#6A7282] rounded">
+                      <p className="bg-[#f3f4f6] p-2 rounded-lg">{s.plan}</p>
                     </td>
-                    <td className="px-6 py-4 font-semibold">{s.amount}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
+                    <td className="px-6 py-4 text-[#242424] text-[15px] font-semibold">{s.amount}</td>
+                    <td className="px-6 py-4 text-sm text-[#6A7282]">
                       {new Date(s.startDate).toLocaleDateString()} –{" "}
                       {new Date(s.endDate).toLocaleDateString()}
                     </td>
@@ -250,10 +250,10 @@ export default function Subscriptions() {
                       </span>
                     </td>
                     <td className="px-6 py-4 flex justify-end gap-2">
-                      <button className="p-2 hover:bg-green-50 rounded text-green-700">
+                      <button className="p-2 hover:bg-[#f3f4f6] rounded text-[#1F7A4D] cursor-pointer">
                         <Eye className="w-4 h-4" />
                       </button>
-                      <button className="p-2 hover:bg-green-50 rounded text-green-700">
+                      <button className="p-2 hover:bg-[#f3f4f6] rounded text-[#1F7A4D] cursor-pointer">
                         <RefreshCw className="w-4 h-4" />
                       </button>
                     </td>
@@ -266,13 +266,13 @@ export default function Subscriptions() {
       </div>
 
       {/* Renewal Reminder */}
-      <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-6 flex gap-4">
-        <div className="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center">
-          <Calendar className="w-6 h-6 text-white" />
+      <div className="bg-linear-to-br from-[#FEF3C7] to-[#FFFFFF] border-[0.76px] border-[#FCD34D] rounded-lg p-6 flex gap-4">
+        <div className="w-12 h-12 bg-[#F59E0B] rounded-lg flex items-center justify-center">
+          <Calendar className="w-6 h-6 text-[#ffffff]" />
         </div>
         <div>
-          <h3 className="font-semibold">Renewal Reminders</h3>
-          <p className="text-sm text-gray-600 mt-1">
+          <h3 className="font-semibold text-[17px] text-[#242424]">Renewal Reminders</h3>
+          <p className="text-sm text-[#6A7282] mt-1">
             {
               filteredSubscriptions.filter(
                 (s) => s.renewalDue > 0 && s.renewalDue <= 90
@@ -280,13 +280,13 @@ export default function Subscriptions() {
             }{" "}
             subscriptions are expiring in the next 90 days.
           </p>
-          <button className="mt-3 px-4 py-2 bg-yellow-500 text-white rounded-lg">
+          <button className="mt-3 px-4 py-2 bg-[#F59E0B] text-[#ffffff] text-sm rounded-lg cursor-pointer">
             Send Renewal Reminders
           </button>
         </div>
       </div>
 
-      <div className="text-sm text-gray-500">
+      <div className="text-sm text-[#6A7282]">
         Showing {filteredSubscriptions.length} of {subscriptions.length} subscriptions
       </div>
     </div>

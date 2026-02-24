@@ -109,7 +109,7 @@ export default function FormPortal({ user }: FormPortalProps) {
             Manage membership registration, renewal, and data collection forms
           </p>
         </div>
-        <button className="inline-flex items-center gap-2 px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] transition-colors font-medium">
+        <button className="inline-flex items-center gap-2 px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] transition-colors font-medium cursor-pointer">
           <Plus className="w-5 h-5" />
           Create New Form
         </button>
@@ -120,7 +120,7 @@ export default function FormPortal({ user }: FormPortalProps) {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="bg-white rounded-lg border border-[#e5e7eb] p-6"
+            className="bg-[#ffffff] rounded-lg border border-[#e5e7eb] p-6"
           >
             <div className="flex items-start justify-between">
               <div>
@@ -193,14 +193,14 @@ export default function FormPortal({ user }: FormPortalProps) {
               </div>
 
               <div className="flex items-center gap-2">
-                <button className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] transition-colors text-sm font-medium">
+                <button className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-[#1F7A4D] text-white cursor-pointer rounded-lg hover:bg-[#176939] transition-colors text-sm font-medium">
                   <Eye className="w-4 h-4" />
                   View Submissions
                 </button>
-                <button className="p-2 border border-[#e5e7eb] rounded-lg text-[#242424] hover:bg-[#f9fafb] transition-colors">
+                <button className="p-2 border border-[#e5e7eb] rounded-lg text-[#242424] hover:bg-[#f9fafb] transition-colors cursor-pointer">
                   <Copy className="w-4 h-4" />
                 </button>
-                <button className="p-2 border border-[#e5e7eb] rounded-lg text-[#242424] hover:bg-[#f9fafb] transition-colors">
+                <button className="p-2 border border-[#e5e7eb] rounded-lg text-[#242424] hover:bg-[#f9fafb] transition-colors cursor-pointer">
                   <Download className="w-4 h-4" />
                 </button>
               </div>

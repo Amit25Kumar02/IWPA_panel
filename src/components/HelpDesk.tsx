@@ -7,6 +7,7 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
+  ArrowRight,
 } from "lucide-react";
 
 export default function HelpDesk() {
@@ -71,7 +72,7 @@ export default function HelpDesk() {
 
         <button
           onClick={() => setShowNewTicket(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939]"
+          className="flex items-center gap-2 px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           New Ticket
@@ -109,11 +110,11 @@ export default function HelpDesk() {
           <div className="flex justify-end gap-3">
             <button
               onClick={() => setShowNewTicket(false)}
-              className="px-4 py-2 border border-[#e5e7eb] rounded-lg"
+              className="px-4 py-2 border border-[#e5e7eb] rounded-lg cursor-pointer"
             >
               Cancel
             </button>
-            <button className="px-4 py-2 bg-[#1F7A4D] text-white rounded-lg">
+            <button className="px-4 py-2 bg-[#1F7A4D] text-white rounded-lg cursor-pointer">
               Submit Ticket
             </button>
           </div>
@@ -169,8 +170,8 @@ export default function HelpDesk() {
                 </div>
               </div>
 
-              <button className="text-sm text-[#1F7A4D] font-medium hover:underline">
-                View Conversation →
+              <button className="text-sm text-[#1F7A4D] font-medium hover:underline flex items-center gap-1">
+                View Conversation <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           ))}

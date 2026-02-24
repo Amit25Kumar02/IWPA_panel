@@ -75,7 +75,7 @@ export default function Publications() {
                         </div>
                     </div>
 
-                    <button className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-[#155DFC] text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-[#0f4ac7]   justify-center">
+                    <button className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-[#155DFC] text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-[#0f4ac7] cursor-pointer justify-center">
                         <Download className="w-4 h-4" />
                         Download Directory
                     </button>
@@ -124,7 +124,7 @@ export default function Publications() {
                                     </td>
                                     <td className="px-3 sm:px-4 py-3 text-xs sm:text-sm text-[#6a7282]">{doc.size}</td>
                                     <td className="px-3 sm:px-4 py-3 text-right">
-                                        <button className="inline-flex items-center gap-1 px-2 sm:px-3 py-1.5 text-xs sm:text-sm text-[#1F7A4D] hover:bg-[#ecfdf5] rounded-lg">
+                                        <button className="inline-flex items-center gap-1 px-2 sm:px-3 py-1.5 text-xs sm:text-sm text-[#1F7A4D] hover:bg-[#ecfdf5] rounded-lg cursor-pointer">
                                             <Download className="w-4 h-4" />
                                             Download
                                         </button>

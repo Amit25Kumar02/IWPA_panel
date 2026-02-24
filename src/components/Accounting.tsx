@@ -155,10 +155,10 @@ export default function Accounting() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-end gap-2">
-                          <button className="p-2 rounded-lg hover:bg-[#ecfdf5] text-[#1F7A4D]">
+                          <button className="p-2 rounded-lg hover:bg-[#ecfdf5] text-[#1F7A4D] cursor-pointer">
                             <Eye className="w-4 h-4" />
                           </button>
-                          <button className="p-2 rounded-lg hover:bg-[#ecfdf5] text-[#1F7A4D]">
+                          <button className="p-2 rounded-lg hover:bg-[#ecfdf5] text-[#1F7A4D] cursor-pointer">
                             <Download className="w-4 h-4" />
                           </button>
                         </div>

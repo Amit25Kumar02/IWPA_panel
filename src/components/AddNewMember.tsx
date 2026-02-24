@@ -126,7 +126,7 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-[#f9fafb] rounded-lg text-[#6a7282] transition-colors"
+            className="p-2 hover:bg-[#f9fafb] rounded-lg text-[#6a7282] transition-colors cursor-pointer"
           >
             <X className="w-6 h-6" />
           </button>
@@ -336,14 +336,18 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
 
           {/* Wind Electric Generator Details (only if generator selected) */}
           {formData.memberCategory === "generator" && (
-            <Section title="Wind Electric Generator Details">
-              <button
-                onClick={addWindRow}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] transition-colors text-sm font-medium mb-4"
-              >
-                <Plus className="w-4 h-4" />
-                Add More
-              </button>
+            <Section 
+              title="Wind Electric Generator Details"
+              action={
+                <button
+                  onClick={addWindRow}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#1F7A4D] text-[#ffffff] rounded-lg hover:bg-[#176939] transition-colors text-sm font-medium cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add More
+                </button>
+              }
+            >
 
               <div className="border border-[#e5e7eb] rounded-lg overflow-hidden">
                 <div className="overflow-x-auto">
@@ -420,7 +424,7 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
                             <button
                               onClick={() => removeWindRow(row.id)}
                               disabled={windRows.length === 1}
-                              className="p-1.5 hover:bg-red-50 rounded text-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="p-1.5 hover:bg-red-50 rounded text-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -478,19 +482,19 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
         <div className="flex items-center justify-end gap-3 px-8 py-6 border-t border-[#e5e7eb] bg-[#f9fafb]">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 border border-[#e5e7eb] text-[#242424] rounded-lg hover:bg-white transition-colors font-medium"
+            className="px-6 py-2.5 border border-[#e5e7eb] text-[#242424] rounded-lg hover:bg-white transition-colors font-medium cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={handleSaveDraft}
-            className="px-6 py-2.5 border border-[#1F7A4D] text-[#1F7A4D] rounded-lg hover:bg-[#ecfdf5] transition-colors font-medium"
+            className="px-6 py-2.5 border border-[#1F7A4D] text-[#1F7A4D] rounded-lg hover:bg-[#ecfdf5] transition-colors font-medium cursor-pointer"
           >
             Save Draft
           </button>
           <button
             onClick={handleSubmit}
-            className="px-6 py-2.5 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] transition-colors font-medium"
+            className="px-6 py-2.5 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] transition-colors font-medium cursor-pointer"
           >
             Submit
           </button>
@@ -503,10 +507,13 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
 /* -------------------------------------------------------------------------
    Helper components
    ------------------------------------------------------------------------- */
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children, action }: { title: string; children: React.ReactNode; action?: React.ReactNode }) {
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-[#242424]">{title}</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-[#242424]">{title}</h3>
+        {action}
+      </div>
       {children}
     </div>
   );

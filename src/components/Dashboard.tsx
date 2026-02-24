@@ -33,7 +33,7 @@ export default function Dashboard() {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Stat title="Active Policies" value="24" growth="+3%" icon={<FileText />} color="green" bg="green" />
-        <Stat title="Ongoing Legal Matters" value="8" growth="+2%" icon={<Scale />} color="amber" bg="amber" />
+        <Stat title="Ongoing Legal Matters" value="8" growth="+2%" icon={<AlertCircle />} color="amber" bg="amber" />
         <Stat title="Upcoming Events" value="12" growth="+5%" icon={<CalendarDays />} color="blue" bg="blue" />
         <Stat title="New Members" value="156" growth="+12%" icon={<Users />} color="purple" bg="purple" />
       </div>
@@ -106,7 +106,7 @@ export default function Dashboard() {
             stats="Partnered"
           />
 
-          <button className="text-blue-600 text-sm mt-4 w-full">
+          <button className="text-blue-600 text-sm mt-4 w-full cursor-pointer">
             View All Events
           </button>
         </div>
@@ -123,7 +123,7 @@ export default function Dashboard() {
         <p className="text-sm sm:text-[15px] text-[#DBEAFE] max-w-xl mt-1">
           Expert maintenance and O&M services for wind farms across India
         </p>
-        <button className="mt-4 bg-[#FFFFFF] text-[#155DFC] px-4 py-2 rounded-lg text-sm sm:text-[15px] font-medium w-fit">
+        <button className="mt-4 bg-[#FFFFFF] text-[#155DFC] px-4 py-2 rounded-lg text-sm sm:text-[15px] font-medium w-fit cursor-pointer">
           Learn More
         </button>
       </div>

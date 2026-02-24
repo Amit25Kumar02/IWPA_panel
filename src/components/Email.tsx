@@ -95,7 +95,7 @@ export default function Email() {
         <div className="bg-white rounded-lg border border-[#e5e7eb] p-4">
           <button
             onClick={() => setShowCompose(true)}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] transition-colors mb-4"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] transition-colors mb-4 cursor-pointer"
           >
             <Send className="w-4 h-4" />
             Compose
@@ -215,7 +215,7 @@ export default function Email() {
             <div className="p-6">
               <button
                 onClick={() => setSelectedEmail(null)}
-                className="text-sm text-[#1F7A4D] mb-4"
+                className="text-sm text-[#1F7A4D] mb-4 cursor-pointer"
               >
                 ← Back to inbox
               </button>
@@ -240,7 +240,7 @@ export default function Email() {
           <div className="bg-white rounded-lg w-full max-w-lg p-6">
             <div className="flex justify-between mb-4">
               <h3 className="font-semibold text-lg">New Message</h3>
-              <button onClick={() => setShowCompose(false)}>
+              <button onClick={() => setShowCompose(false)} className="cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -260,10 +260,10 @@ export default function Email() {
             />
 
             <div className="flex justify-between">
-              <button className="p-2 hover:bg-[#f9fafb] rounded-lg">
+              <button className="p-2 hover:bg-[#f9fafb] rounded-lg cursor-pointer">
                 <Paperclip className="w-5 h-5 text-[#6a7282]" />
               </button>
-              <button className="px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939]">
+              <button className="px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] cursor-pointer">
                 Send
               </button>
             </div>

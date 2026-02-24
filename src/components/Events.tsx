@@ -130,7 +130,7 @@ export default function EventsPage() {
                 { name: "Mr. Arun Mehta", title: "CEO, WindTech India" },
             ],
         },
-          {
+        {
             id: 1,
             title: "Wind Energy Technology Summit 2026",
             shortDescription: "Join us for the premier wind energy technology summit showcasing the latest innovations, policy updates, and networking opportunities in the renewable energy sector.",
@@ -226,7 +226,7 @@ export default function EventsPage() {
                                         </span>
                                         <button
                                             onClick={() => setSelectedEvent(event)}
-                                            className="text-sm text-[#009966] flex items-center gap-1 hover:underline"
+                                            className="text-sm text-[#009966] flex items-center gap-1 hover:underline cursor-pointer"
                                         >
                                             View Details <ArrowRight className="w-4 h-4" />
                                         </button>
@@ -276,11 +276,31 @@ export default function EventsPage() {
                     <div className="border-[0.8px] border-[#E5E7EB] bg-[#ffffff] rounded-[14px] p-6">
                         <div className="mb-10">
                             <h2 className="font-semibold text-[#101828] text-[20px] mb-4">Event Details</h2>
-                            <div className="grid sm:grid-cols-2 gap-4 text-sm">
-                                <Info label="Date" value={selectedEvent.date} />
-                                <Info label="Time" value={selectedEvent.time} />
-                                <Info label="Location" value={selectedEvent.location} />
-                                <Info label="Attendees" value={selectedEvent.attendees} />
+                            <div className="grid sm:grid-cols-2 gap-6">
+                                <Info
+                                    type="date"
+                                    label="Date"
+                                    value={selectedEvent.date}
+                                />
+
+                                <Info
+                                    type="time"
+                                    label="Time"
+                                    value={selectedEvent.time}
+                                />
+
+                                <Info
+                                    type="location"
+                                    label="Location"
+                                    value={selectedEvent.location}
+                                    subValue={selectedEvent.address}
+                                />
+
+                                <Info
+                                    type="attendees"
+                                    label="Expected Attendees"
+                                    value={selectedEvent.attendees}
+                                />
                             </div>
                         </div>
 
@@ -355,12 +375,57 @@ export default function EventsPage() {
 }
 
 /* ---------- Small UI helper ---------- */
-function Info({ label, value }: { label: string; value: string }) {
+function Info({
+    type,
+    label,
+    value,
+    subValue,
+}: {
+    type: "date" | "time" | "location" | "attendees";
+    label: string;
+    value: string;
+    subValue?: string;
+}) {
+    const config = {
+        date: {
+            icon: CalendarDays,
+            bg: "bg-[#D0FAE5]",
+            color: "text-[#1F7A4D]",
+        },
+        time: {
+            icon: Clock,
+            bg: "bg-[#DBEAFE]",
+            color: "text-[#155DFC]",
+        },
+        location: {
+            icon: MapPin,
+            bg: "bg-[#F3E8FF]",
+            color: "text-[#8200DB]",
+        },
+        attendees: {
+            icon: Users,
+            bg: "bg-[#FEF3C6]",
+            color: "text-[#BB4D00]",
+        },
+    };
+
+    const Icon = config[type].icon;
+
     return (
-        <div>
-            <div className="bg-[#D0FAE5]"></div>
-            <p className="text-sm text-[#4A5565]">{label}</p>
-            <p className="text-[16px] font-medium text-[#101828]">{value}</p>
+        <div className="flex items-start gap-3">
+            <div
+                className={`w-10 h-10 rounded-lg flex items-center justify-center ${config[type].bg}`}
+            >
+                <Icon className={`w-5 h-5 ${config[type].color}`} />
+            </div>
+
+            <div>
+                <p className="text-sm text-[#667085]">{label}</p>
+                <p className="text-[16px] font-medium text-[#101828]">{value}</p>
+                {subValue && (
+                    <p className="text-sm text-[#667085]">{subValue}</p>
+                )}
+            </div>
         </div>
     );
 }

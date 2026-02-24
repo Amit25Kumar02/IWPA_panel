@@ -96,7 +96,7 @@ export function Login({ onLogin }: LoginProps) {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#4A5565]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#4A5565] cursor-pointer"
                 >
                   {showPassword ? (
                     <EyeOff className="w-4 h-4" />

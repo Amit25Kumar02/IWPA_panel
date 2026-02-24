@@ -240,10 +240,10 @@ export default function MyDocuments() {
 
       {/* Document List - Grouped by Category */}
       <div className="grid grid-cols-1 gap-10">
-        <div className="bg-white rounded-lg border border-[#e5e7eb] overflow-auto">
+        <div className="bg-[#ffffff] rounded-lg border border-[#e5e7eb] overflow-auto">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-[#f9fafb] border-b border-[#e5e7eb]">
+              <thead className="bg-[#f9fafb] border-b-[0.76px] border-[#e5e7eb]">
                 <tr>
                   <th className="text-left px-6 py-4 text-sm font-medium text-[#242424]">Document Type</th>
                   <th className="text-left px-6 py-4 text-sm font-medium text-[#242424]">Membership ID</th>
@@ -311,24 +311,24 @@ export default function MyDocuments() {
                           {docCount > 1 ? (
                             <button
                               onClick={() => openDocumentDrawer(docs[0].membershipId, docs[0].category)}
-                              className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] transition-colors"
+                              className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] transition-colors cursor-pointer"
                             >
                               <Eye className="w-4 h-4" />
                             </button>
                           ) : (
                             <>
-                              <button className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] transition-colors">
+                              <button className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] transition-colors cursor-pointer">
                                 <Eye className="w-4 h-4" />
                               </button>
-                              <button className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] transition-colors">
+                              <button className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] transition-colors cursor-pointer">
                                 <Download className="w-4 h-4" />
                               </button>
-                              <button className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] transition-colors">
+                              <button className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] transition-colors cursor-pointer">
                                 <Edit className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => handleDelete(latestDoc.id, latestDoc.documentNumber)}
-                                className="p-2 hover:bg-red-50 rounded-lg text-red-500 transition-colors"
+                                className="p-2 hover:bg-red-50 rounded-lg text-red-500 transition-colors cursor-pointer"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -346,10 +346,10 @@ export default function MyDocuments() {
       </div>
 
       {/* Info Card */}
-      <div className="bg-gradient-to-br from-[#ecfdf5] to-white rounded-lg border border-[#a4f4cf] p-6">
+      <div className="bg-linear-to-br from-[#ecfdf5] to-[#ffffff] rounded-lg border border-[#a4f4cf] p-6">
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 bg-[#1F7A4D] rounded-lg flex items-center justify-center flex-shrink-0">
-            <FileText className="w-6 h-6 text-white" />
+            <FileText className="w-6 h-6 text-[#ffffff]" />
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-semibold text-[#242424] mb-2">
@@ -388,13 +388,13 @@ export default function MyDocuments() {
                 <div className="flex items-center gap-3 justify-end">
                   <button
                     onClick={cancelDelete}
-                    className="px-4 py-2 border border-[#e5e7eb] text-[#242424] rounded-lg hover:bg-[#f9fafb] transition-colors font-medium"
+                    className="px-4 py-2 border border-[#e5e7eb] text-[#242424] rounded-lg hover:bg-[#f9fafb] transition-colors font-medium cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={confirmDelete}
-                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium"
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium cursor-pointer"
                   >
                     Delete
                   </button>
@@ -408,7 +408,7 @@ export default function MyDocuments() {
       {/* Document Drawer */}
       {documentDrawer.show && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-end">
-          <div className="bg-white w-full sm:w-[600px] h-[80vh] sm:h-[90vh] sm:rounded-l-lg shadow-xl flex flex-col">
+          <div className="bg-[#ffffff] w-150 h-[80vh] sm:h-[90vh] sm:rounded-l-lg shadow-xl flex flex-col">
             {/* Drawer Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#e5e7eb]">
               <div>

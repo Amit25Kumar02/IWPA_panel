@@ -73,7 +73,7 @@ export default function AdBooking() {
 
                 <button
                     onClick={() => setOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939]"
+                    className="flex items-center gap-2 px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] cursor-pointer"
                 >
                     <Plus className="w-4 h-4" />
                     New Advertisement
@@ -136,7 +136,7 @@ export default function AdBooking() {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <button className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D]">
+                                        <button className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] cursor-pointer">
                                             <Eye className="w-4 h-4" />
                                         </button>
                                     </td>
@@ -201,7 +201,7 @@ export default function AdBooking() {
                     <div className="bg-white rounded-lg w-full max-w-lg">
                         <div className="flex items-center justify-between px-6 py-4 border-b">
                             <h2 className="text-lg font-semibold">New Advertisement</h2>
-                            <button onClick={() => setOpen(false)} className="p-1 hover:bg-gray-100 rounded">
+                            <button onClick={() => setOpen(false)} className="p-1 hover:bg-gray-100 rounded cursor-pointer">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
@@ -220,11 +220,11 @@ export default function AdBooking() {
                         <div className="px-6 py-4 border-t flex justify-end gap-3">
                             <button
                                 onClick={() => setOpen(false)}
-                                className="px-4 py-2 border rounded-lg"
+                                className="px-4 py-2 border rounded-lg cursor-pointer"
                             >
                                 Cancel
                             </button>
-                            <button className="px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939]">
+                            <button className="px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] cursor-pointer">
                                 Create Advertisement
                             </button>
                         </div>

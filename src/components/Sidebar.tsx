@@ -61,12 +61,12 @@ export function Sidebar({
     { id: "publications", label: "Publications", icon: BookOpen },
     { id: "events", label: "Events", icon: Calendar },
     { id: "adBooking", label: "Ad Booking", icon: Megaphone },
-    // { id: "reporting", label: "Reporting", icon: BarChart3 },
-    // { id: "accounting", label: "Accounting", icon: Calculator },
-    // { id: "teamChat", label: "Team Chat", icon: MessageSquare },
-    // { id: "email", label: "Email", icon: Mail },
-    // { id: "messages", label: "Message", icon: MessageCircle },
-    // { id: "helpDesk", label: "Help Desk", icon: HelpCircle },
+    { id: "reporting", label: "Reporting", icon: BarChart3 },
+    { id: "accounting", label: "Accounting", icon: Calculator },
+    { id: "teamChat", label: "Team Chat", icon: MessageSquare },
+    { id: "email", label: "Email", icon: Mail },
+    { id: "messages", label: "Message", icon: MessageCircle },
+    { id: "helpDesk", label: "Help Desk", icon: HelpCircle },
   ];
 
   return (

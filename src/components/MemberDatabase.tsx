@@ -20,6 +20,8 @@ import AddNewMember from "./AddNewMember";
    ------------------------------------------------------------------------- */
 export default function MemberDatabase() {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
@@ -129,7 +131,7 @@ export default function MemberDatabase() {
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] transition-colors font-medium"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] transition-colors font-medium cursor-pointer"
           >
             <UserPlus className="w-5 h-5" />
             Add New Member
@@ -201,7 +203,7 @@ export default function MemberDatabase() {
             </select>
           </div>
 
-          <button className="inline-flex items-center gap-2 px-4 py-2.5 border border-[#e5e7eb] text-[#242424] rounded-lg hover:bg-[#f9fafb] transition-colors font-medium">
+          <button className="inline-flex items-center gap-2 px-4 py-2.5 border border-[#e5e7eb] text-[#242424] rounded-lg hover:bg-[#f9fafb] transition-colors font-medium cursor-pointer">
             <Download className="w-5 h-5" />
             Export
           </button>
@@ -297,10 +299,16 @@ export default function MemberDatabase() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center justify-end gap-2">
-                            <button className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] transition-colors">
+                            <button className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] transition-colors cursor-pointer">
                               <Eye className="w-4 h-4" />
                             </button>
-                            <button className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] transition-colors">
+                            <button 
+                              onClick={() => {
+                                setSelectedMember(member);
+                                setShowEditModal(true);
+                              }}
+                              className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] transition-colors cursor-pointer"
+                            >
                               <Edit className="w-4 h-4" />
                             </button>
                           </div>
@@ -322,6 +330,17 @@ export default function MemberDatabase() {
 
       {/* Add Member Modal */}
       {showAddModal && <AddNewMember onClose={() => setShowAddModal(false)} />}
+      
+      {/* Edit Member Modal */}
+      {showEditModal && selectedMember && (
+        <AddNewMember 
+          onClose={() => {
+            setShowEditModal(false);
+            setSelectedMember(null);
+          }} 
+          initialData={selectedMember}
+        />
+      )}
     </>
   );
 }
