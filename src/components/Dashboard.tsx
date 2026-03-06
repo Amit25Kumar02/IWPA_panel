@@ -21,9 +21,9 @@ export default function Dashboard() {
   return (
     <div className="p-6 space-y-6 bg-background min-h-screen">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-[#009966] to-[#009689] min-h-[128px] rounded-xl px-4 sm:px-6 py-4 sm:py-6 flex flex-col justify-center">
-        <h2 className="text-xl sm:text-2xl lg:text-[28px] font-bold text-[#ffffff]">
-          Welcome back, <span className="font-bold">Admin User!</span>
+      <div className="bg-linear-to-r from-[#009966] to-[#009689] min-h-32 rounded-xl px-4 sm:px-6 py-4 sm:py-6 flex flex-col justify-center">
+        <h2 className="text-xl sm:text-2xl lg:text-[28.44px] font-bold text-[#ffffff]">
+          Welcome back, Admin User
         </h2>
         <p className="text-sm sm:text-base lg:text-[17px] text-[#D0FAE5] mt-1">
           Stay updated with the latest policies, events, and industry insights from IWPA
@@ -43,45 +43,64 @@ export default function Dashboard() {
         {/* Latest Notices */}
         <div className="lg:col-span-2 bg-card rounded-xl border-[0.76px] border-border p-4 sm:p-5">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold text-base sm:text-[17px] text-card-foreground flex items-center gap-2">
+            <h3 className="font-semibold text-base sm:text-[17px] text-[#101828] flex items-center gap-2">
               <div className="p-2 bg-[#E7F7EE] dark:bg-[#1F7A4D]/20 rounded-lg">
                 <Bell className="w-4.5 h-4.5 text-[#1F7A4D]" />
               </div>
               Latest Notice Uploads
             </h3>
-            <span className="text-xs sm:text-sm text-foreground flex items-center gap-1 cursor-pointer">
+            <span className="text-[13.27px] text-[#242424] font-medium flex items-center gap-1 cursor-pointer">
               View All <ArrowUpRight className="w-4 h-4" />
             </span>
           </div>
 
-          {[
-            "New Wind Energy Policy Guidelines Released",
-            "Quarterly Meeting Schedule Announced",
-            "Maharashtra State Wind Energy Guidelines",
-            "Policy Guidelines Released",
-            "Meeting Quarterly Schedule Announced",
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 sm:gap-0 py-4 sm:py-5.5 border-t-[0.76px] border-border last:border-none"
-            >
-              <div className="flex-1">
-                <p className="text-sm font-medium text-card-foreground">{item}</p>
-                <p className="text-xs sm:text-[13px] text-muted-foreground">
-                  National Council · Jan 2026
-                </p>
-              </div>
-              <button className="text-xs sm:text-[13px] font-medium text-foreground cursor-pointer self-start sm:self-auto">
-                 Download
-              </button>
-            </div>
-          ))}
+
+          <Notice
+            title="New Wind Energy Policy Guidelines Released"
+            tag="Policy"
+            badge="NEW"
+            council="National Council"
+            date="5 Jan 2026"
+          />
+
+          <Notice
+            title="Quarterly Meeting Schedule Announced"
+            tag="Announcement"
+            badge="NEW"
+            council="National Council"
+            date="4 Jan 2026"
+          />
+
+          <Notice
+            title="Maharashtra State Wind Energy Guidelines"
+            tag="Regulation"
+            // badge="NEW"
+            council="State Council"
+            date="3 Jan 2026"
+          />
+
+          <Notice
+            title="Policy Guidelines Released"
+            tag="Policy"
+            badge="NEW"
+            council="National Council"
+            date="3 Jan 2026"
+          />
+
+          <Notice
+            title="Meeting Quarterly Schedule Announced"
+            tag="Announcement"
+            badge="NEW"
+            council="National Council"
+            date="1 Jan 2026"
+          />
+
         </div>
 
         {/* Upcoming Events */}
-        <div className="bg-card rounded-xl border border-border p-4 sm:p-5">
-          <h3 className="font-semibold text-base sm:text-[17px] mb-4 flex items-center gap-2 text-card-foreground">
-            <div className="p-2 bg-[#DBEAFE] dark:bg-[#1447E6]/20 rounded-lg">
+        <div className="bg-card rounded-xl border border-border px-4  h-fit">
+          <h3 className="font-semibold text-base pt-4 sm:text-[17px] mb-4 flex items-center gap-2 text-[#101828]">
+            <div className="p-2 bg-[#DBEAFE] rounded-lg">
               <CalendarDays className="w-4.5 h-4.5 text-[#1447E6]" />
             </div>
             Upcoming Events
@@ -92,21 +111,27 @@ export default function Dashboard() {
             date="15 February 2026"
             place="New Delhi"
             stats="Internal"
+            bg="bg-[#E7F7EE]"
+            textColor="text-[#1F7A4D]"
           />
           <Event
             title="National Council Meeting"
             date="20 January 2026"
             place="Virtual"
             stats="Internal"
+            bg="bg-[#E7F7EE]"
+            textColor="text-[#1F7A4D]"
           />
           <Event
             title="Renewable Energy Expo"
             date="10 March 2026"
             place="Mumbai"
             stats="Partnered"
+            bg="bg-[#DBEAFE]"
+            textColor="text-[#1447E6]"
           />
 
-          <button className="text-blue-600 text-sm mt-4 w-full cursor-pointer">
+          <button className="text-[#1F7A4D] text-[13.27px] font-medium border-t-[0.76px] border-[#E5E7EB] flex justify-center items-center py-3 mt-4 w-full cursor-pointer">
             View All Events
           </button>
         </div>
@@ -158,33 +183,72 @@ function Stat({ title, value, growth, icon, color, bg }: any) {
   };
 
   return (
-    <div className="bg-card border-[0.76px] border-border rounded-xl p-3 sm:p-4 flex flex-col justify-between">
+    <div className="bg-card border-[0.76px] border-[#E5E7EB] rounded-xl p-4 sm:p-4 flex flex-col justify-between">
       <div className="flex justify-between items-start mb-2">
         <div className={`p-2 rounded-lg w-fit ${bgs[bg]} ${colors[color]}`}>
           {icon}
         </div>
-        <p className={`text-[10px] sm:text-xs flex items-center gap-1 font-medium text-[#1F7A4D] whitespace-nowrap`}>{growth} <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-[#1F7A4D]" /></p>
+        <p className={`text-[13.27px] flex items-center gap-1 font-medium text-[#1F7A4D] whitespace-nowrap`}>{growth} <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-[#1F7A4D]" /></p>
       </div>
       <div>
-        <h2 className="text-xl sm:text-2xl font-bold text-card-foreground">{value}</h2>
-        <p className="text-xs sm:text-sm text-muted-foreground">{title}</p>
+        <h2 className="text-[28.44px]  font-bold text-[#101828]">{value}</h2>
+        <p className="text-[13.27px] text-[#4A5565]">{title}</p>
       </div>
 
     </div>
   );
 }
 
-function Event({ title, date, place, stats }: any) {
+function Notice({ title, tag, badge, council, date }: any) {
   return (
-    <div className="mb-4 border-t border-border pt-3 last:border-none">
-      <p className="text-sm font-medium text-card-foreground">{title}</p>
-      <p className="text-xs text-muted-foreground">
+    <div className="flex justify-between items-center py-4 border-t border-[#E5E7EB]">
+
+      <div>
+        <div className="flex items-center gap-2 mb-1">
+          <h3 className="font-medium text-[17.06px] text-[#101828]">
+            {title}
+          </h3>
+          {badge && (
+            <span className="px-2 py-0.5 bg-[#E7F7EE] text-[#1F7A4D] rounded">
+              {badge}
+            </span>
+          )}
+        </div>
+        {/* <p className="text-sm font-medium">{title}</p> */}
+
+        <div className="flex gap-2 mt-1 text-[13.27px]">
+
+          <span className="px-2 py-0.5 bg-[#F3F4F6] text-[11.38px] text-[#4A5565] rounded">
+            {tag}
+          </span>
+
+          <span className="text-[#4A5565] text-[13.27px]">
+            {council} · {date}
+          </span>
+
+        </div>
+
+      </div>
+
+      <button className="text-[13.27px] font-medium text-[#242424]">
+        Download
+      </button>
+
+    </div>
+  )
+}
+
+function Event({ title, date, place, stats, bg, textColor }: any) {
+  return (
+    <div className="mb-4 border-t-[0.76px] border-[#E5E7EB] pt-3 ">
+      <p className="text-[15px] font-medium text-[#101828]">{title}</p>
+      <p className="text-[13.27px] text-[#4A5565]">
         {date}
       </p>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-[13.27px] text-[#4A5565]">
         {place}
       </p>
-      <p className="text-xs text-[#1F7A4D] bg-[#E7F7EE] dark:bg-[#1F7A4D]/20 w-fit px-2 py-1 rounded mt-1">
+      <p className={`text-xs ${textColor} ${bg} w-fit px-2 py-1 rounded mt-1`}>
         {stats}
       </p>
     </div>
@@ -193,9 +257,9 @@ function Event({ title, date, place, stats }: any) {
 
 function Action({ icon, label, bg, color }: any) {
   return (
-    <div className="bg-card border-[0.76px] border-border rounded-xl p-3 sm:p-4 flex flex-col items-center gap-2 hover:shadow cursor-pointer transition-shadow">
+    <div className="bg-card border-[0.76px] border-[#E5E7EB] rounded-xl p-6 flex flex-col items-center gap-2 hover:shadow cursor-pointer transition-shadow">
       <div className={`p-2 ${bg} rounded-lg ${color}`}>{icon}</div>
-      <p className="text-[10px] sm:text-xs font-medium text-center text-card-foreground leading-tight">{label}</p>
+      <p className="text-[13.27px] font-medium text-center text-[#101828] leading-tight">{label}</p>
     </div>
   );
 }
