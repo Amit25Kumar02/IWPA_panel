@@ -113,7 +113,7 @@ export default function Dashboard() {
       </div>
 
       {/* Sponsored */}
-      <div className="rounded-xl min-h-[200px] sm:min-h-[227px] bg-linear-to-r from-[#155DFC] to-[#0092B8] p-4 sm:p-6 text-[#ffffff] flex flex-col justify-center">
+      {/* <div className="rounded-xl min-h-[200px] sm:min-h-[227px] bg-linear-to-r from-[#155DFC] to-[#0092B8] p-4 sm:p-6 text-[#ffffff] flex flex-col justify-center">
         <span className="text-xs bg-[#FFFFFF33] px-2 py-1 rounded-full font-medium w-fit">
           SPONSORED
         </span>
@@ -126,7 +126,7 @@ export default function Dashboard() {
         <button className="mt-4 bg-[#FFFFFF] text-[#155DFC] px-4 py-2 rounded-lg text-sm sm:text-[15px] font-medium w-fit cursor-pointer">
           Learn More
         </button>
-      </div>
+      </div> */}
 
       {/* Bottom Actions */}
       <div className="grid grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">

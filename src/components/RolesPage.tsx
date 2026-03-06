@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { 
-  Shield, 
-  Building2, 
-  Users, 
-  MapPin, 
+import {
+  Shield,
+  Building2,
+  Users,
+  MapPin,
   Briefcase,
   Plus,
   Search,
@@ -56,14 +56,15 @@ const theme = {
     { id: 'headquarters', name: 'Headquarters', icon: Building2, color: '#1F7A4D', bgColor: '#d0fae5', borderColor: '#a4f4cf' },
     { id: 'national_council', name: 'National Council', icon: Shield, color: '#155DFC', bgColor: '#dbeafe', borderColor: '#93c5fd' },
     { id: 'state_council', name: 'State Council', icon: MapPin, color: '#a855f7', bgColor: '#f3e8ff', borderColor: '#d8b4fe' },
-    { id: 'general_vendors', name: 'General / Vendors', icon: Briefcase, color: '#f59e0b', bgColor: '#fef3c7', borderColor: '#fcd34d' },
+    { id: 'general', name: 'General', icon: Briefcase, color: '#f59e0b', bgColor: '#fef3c7', borderColor: '#fcd34d' },
+    { id: 'vendors', name: 'Vendors', icon: Users, color: '#10b981', bgColor: '#d1fae5', borderColor: '#6ee7b7'  },
   ],
   getCategoryById: (id: string) => theme.categories.find(c => c.id === id)
 };
 
 // =================================
 
-type RoleCategory = 'headquarters' | 'national_council' | 'state_council' | 'general_vendors';
+type RoleCategory = 'headquarters' | 'national_council' | 'state_council' | 'general' | 'vendors';
 
 interface RoleTemplate {
   id: string;
@@ -83,6 +84,7 @@ interface RoleInstance {
   council?: string;
   designation: string;
   companyName?: string;
+  companyDescription?: string;
   photo?: File | null;
   photoPreview?: string;
   companyLogo?: File | null;
@@ -118,25 +120,33 @@ const mockRoleTemplates: RoleTemplate[] = [
   { id: 'hq-3', title: 'Head - Policy & Advocacy', category: 'headquarters', description: 'Policy leadership', activeInstances: 1 },
   { id: 'hq-4', title: 'Head - Technical Affairs', category: 'headquarters', description: 'Technical leadership', activeInstances: 1 },
   { id: 'hq-5', title: 'Head - Member Services', category: 'headquarters', description: 'Member relations', activeInstances: 1 },
-  
+
   // National Council
   { id: 'nc-1', title: 'President', category: 'national_council', description: 'Association president', activeInstances: 1 },
   { id: 'nc-2', title: 'Vice President', category: 'national_council', description: 'Association vice president', activeInstances: 2 },
   { id: 'nc-3', title: 'Secretary General', category: 'national_council', description: 'General secretary', activeInstances: 1 },
   { id: 'nc-4', title: 'Treasurer', category: 'national_council', description: 'Financial officer', activeInstances: 1 },
   { id: 'nc-5', title: 'Council Member', category: 'national_council', description: 'Executive council member', activeInstances: 8 },
-  
+
   // State Council
   { id: 'sc-1', title: 'State President', category: 'state_council', state: 'Maharashtra', description: 'State president', activeInstances: 1 },
   { id: 'sc-2', title: 'State Secretary', category: 'state_council', state: 'Maharashtra', description: 'State secretary', activeInstances: 1 },
   { id: 'sc-3', title: 'State President', category: 'state_council', state: 'Gujarat', description: 'State president', activeInstances: 1 },
   { id: 'sc-4', title: 'State Secretary', category: 'state_council', state: 'Gujarat', description: 'State secretary', activeInstances: 1 },
   { id: 'sc-5', title: 'State President', category: 'state_council', state: 'Tamil Nadu', description: 'State president', activeInstances: 1 },
-  
-  // General/Vendors
-  { id: 'gv-1', title: 'Member Company', category: 'general_vendors', description: 'General member', activeInstances: 142 },
-  { id: 'gv-2', title: 'Vendor Partner', category: 'general_vendors', description: 'Vendor/supplier', activeInstances: 34 },
-  { id: 'gv-3', title: 'Associate Member', category: 'general_vendors', description: 'Associate member', activeInstances: 28 },
+
+  // General (3 roles)
+  { id: 'gen-1', title: 'Member Company', category: 'general', description: 'General member', activeInstances: 142 },
+  { id: 'gen-2', title: 'Associate Member', category: 'general', description: 'Associate member', activeInstances: 28 },
+  { id: 'gen-3', title: 'Honorary Member', category: 'general', description: 'Honorary member', activeInstances: 12 },
+
+  // Vendors (6 roles)
+  { id: 'ven-1', title: 'Vendor Partner', category: 'vendors', description: 'Vendor/supplier', activeInstances: 34 },
+  { id: 'ven-2', title: 'Service Provider', category: 'vendors', description: 'Service vendor', activeInstances: 18 },
+  { id: 'ven-3', title: 'Technology Partner', category: 'vendors', description: 'Tech vendor', activeInstances: 15 },
+  { id: 'ven-4', title: 'Consultant', category: 'vendors', description: 'Consulting vendor', activeInstances: 22 },
+  { id: 'ven-5', title: 'Supplier', category: 'vendors', description: 'Material supplier', activeInstances: 41 },
+  { id: 'ven-6', title: 'Contractor', category: 'vendors', description: 'Contract vendor', activeInstances: 27 },
 ];
 
 export default function RolesPermissions() {
@@ -153,6 +163,7 @@ export default function RolesPermissions() {
     title: '',
     designation: '',
     companyName: '',
+    companyDescription: '',
     mobile: '',
     landline: '',
     email: '',
@@ -172,7 +183,7 @@ export default function RolesPermissions() {
     const matchesCategory = role.category === selectedCategory;
     const matchesState = selectedCategory === 'state_council' ? role.state === selectedState : true;
     const matchesSearch = role.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         role.description.toLowerCase().includes(searchQuery.toLowerCase());
+      role.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesState && matchesSearch;
   });
 
@@ -269,7 +280,7 @@ export default function RolesPermissions() {
       <div className="grid md:grid-cols-6 xl:grid-cols-12 gap-8 h-full">
         {/* Left Panel - Categories */}
         <div className="md:col-span-3">
-          <Card className="h-full flex flex-col">
+          <Card className="h-fit flex flex-col">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center gap-2 mb-2">
                 <Shield className="w-5 h-5" style={{ color: theme.colors.primary }} />
@@ -277,7 +288,7 @@ export default function RolesPermissions() {
               </div>
               <p className="text-sm text-gray-500">Manage position-based roles</p>
             </div>
-            
+
             <ScrollArea className="flex-1">
               <div className="p-4 space-y-2">
                 {theme.categories.map((category) => {
@@ -297,7 +308,7 @@ export default function RolesPermissions() {
                       }}
                       className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all border-2 hover:border-gray-300 cursor-pointer`}
                     >
-                      <div 
+                      <div
                         style={{ backgroundColor: category.bgColor }}
                         className="w-10 h-10 rounded-lg flex items-center justify-center"
                       >
@@ -322,7 +333,7 @@ export default function RolesPermissions() {
 
         {/* Middle Panel - Roles List */}
         <div className="md:col-span-3">
-          <Card className="h-full flex flex-col">
+          <Card className="h-fit flex flex-col">
             <div className="p-6 border-b border-gray-200">
               {/* Council/State Selector */}
               {selectedCategory === 'state_council' && (
@@ -394,11 +405,10 @@ export default function RolesPermissions() {
                     <button
                       key={role.id}
                       onClick={() => handleRoleSelect(role)}
-                      className={`w-full text-left p-4 rounded-lg border-2 transition-all cursor-pointer ${
-                        selectedRole?.id === role.id
+                      className={`w-full text-left p-4 rounded-lg border-2 transition-all cursor-pointer ${selectedRole?.id === role.id
                           ? 'bg-opacity-5'
                           : 'bg-white hover:border-gray-300'
-                      }`}
+                        }`}
                       style={{
                         borderColor: selectedRole?.id === role.id ? `${theme.colors.primary}30` : theme.colors.gray[200],
                         backgroundColor: selectedRole?.id === role.id ? `${theme.colors.primary}0d` : 'white'
@@ -458,10 +468,10 @@ export default function RolesPermissions() {
                       <FileText className="w-4 h-4" style={{ color: theme.colors.primary }} />
                       Basic Information
                     </h3>
-                    
+
                     <div className="space-y-4">
                       <div>
-                        <Label htmlFor="title">Role Title *</Label>
+                        <Label htmlFor="title">Role Title <span className="text-red-500">*</span></Label>
                         <Input
                           id="title"
                           value={formData.title}
@@ -503,7 +513,7 @@ export default function RolesPermissions() {
                       </div>
 
                       <div>
-                        <Label htmlFor="designation">Designation *</Label>
+                        <Label htmlFor="designation">Designation <span className="text-red-500">*</span></Label>
                         <Input
                           id="designation"
                           value={formData.designation}
@@ -532,7 +542,7 @@ export default function RolesPermissions() {
                       <Upload className="w-4 h-4" style={{ color: theme.colors.primary }} />
                       Photos & Logos
                     </h3>
-                    
+
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label>Profile Photo</Label>
@@ -550,10 +560,10 @@ export default function RolesPermissions() {
                               </Button>
                             </div>
                           ) : (
-                            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer transition-colors"
-                                   style={{ hover: { borderColor: theme.colors.primary } }}>
-                              <Upload className="w-6 h-6 text-gray-400" />
-                              <span className="text-xs text-gray-500 mt-2">Upload Photo</span>
+                            <label className="flex flex-col items-center justify-center w-full h-32 border-2  border-[#D1D5DC] rounded-lg cursor-pointer transition-colors"
+                              style={{ hover: { borderColor: theme.colors.primary } }}>
+                              <Upload className="w-6 h-6 text-[#99A1AF]" />
+                              <span className="text-xs text-[#6A7282] mt-2">Upload Photo</span>
                               <input type="file" className="hidden" accept="image/*" onChange={handlePhotoUpload} />
                             </label>
                           )}
@@ -576,15 +586,26 @@ export default function RolesPermissions() {
                               </Button>
                             </div>
                           ) : (
-                            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer transition-colors"
-                                   style={{ hover: { borderColor: theme.colors.primary } }}>
-                              <Upload className="w-6 h-6 text-gray-400" />
-                              <span className="text-xs text-gray-500 mt-2">Upload Logo</span>
+                            <label className="flex flex-col items-center justify-center w-full h-32 border-2  border-[#D1D5DC] rounded-lg cursor-pointer transition-colors"
+                              style={{ hover: { borderColor: theme.colors.primary } }}>
+                              <Upload className="w-6 h-6 text-[#99A1AF]" />
+                              <span className="text-xs text-[#6A7282] mt-2">Upload Logo</span>
                               <input type="file" className="hidden" accept="image/*" onChange={handleLogoUpload} />
                             </label>
                           )}
                         </div>
                       </div>
+
+                    </div>
+                    <div className='mt-3'>
+                      <Label htmlFor="companyDescription">Company Description </Label>
+                      <Textarea
+                        id="companyDescription"
+                        value={formData.companyDescription}
+                        onChange={(e) => setFormData(prev => ({ ...prev, companyDescription: e.target.value }))}
+                        placeholder="Enter company description (if applicable)"
+                        rows={3}
+                      />
                     </div>
                   </div>
 
@@ -596,11 +617,11 @@ export default function RolesPermissions() {
                       <Phone className="w-4 h-4" style={{ color: theme.colors.primary }} />
                       Contact Details
                     </h3>
-                    
+
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="mobile">Mobile Number *</Label>
+                          <Label htmlFor="mobile">Mobile Number <span className="text-red-500">*</span></Label>
                           <Input
                             id="mobile"
                             value={formData.mobile}
@@ -621,7 +642,7 @@ export default function RolesPermissions() {
                       </div>
 
                       <div>
-                        <Label htmlFor="email">Email Address *</Label>
+                        <Label htmlFor="email">Email Address <span className="text-red-500">*</span></Label>
                         <div className="relative">
                           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                           <Input
@@ -650,7 +671,7 @@ export default function RolesPermissions() {
                       </div>
 
                       <div>
-                        <Label htmlFor="address">Address *</Label>
+                        <Label htmlFor="address">Address <span className="text-red-500">*</span></Label>
                         <Textarea
                           id="address"
                           value={formData.address}
@@ -660,6 +681,7 @@ export default function RolesPermissions() {
                         />
                       </div>
                     </div>
+
                   </div>
 
                   <Separator />
@@ -671,7 +693,7 @@ export default function RolesPermissions() {
                       Permissions Preview
                       <Badge variant="secondary" className="ml-2">Read-only</Badge>
                     </h3>
-                    
+
                     <div className="space-y-4">
                       <Card className="p-4" style={{ backgroundColor: '#dbeafe', borderColor: '#93c5fd' }}>
                         <div className="flex items-center gap-2 mb-3">
@@ -732,7 +754,7 @@ export default function RolesPermissions() {
                     <FileText className="w-4 h-4 mr-2" />
                     Save as Draft
                   </Button>
-                  <Button 
+                  <Button
                     style={{ backgroundColor: theme.colors.primary }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = theme.colors.primaryDark)}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = theme.colors.primary)}
@@ -752,7 +774,7 @@ export default function RolesPermissions() {
                 <p className="text-sm text-gray-500 mb-6">
                   Select a role from the list or create a new one to begin
                 </p>
-                <Button 
+                <Button
                   onClick={handleCreateNew}
                   style={{ backgroundColor: theme.colors.primary }}
                   onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = theme.colors.primaryDark)}
