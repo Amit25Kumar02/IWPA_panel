@@ -25,7 +25,7 @@ import EventsMemberPage from "./components/EventsMember";
 import SubscriptionMemberPage from "./components/SubscriptionsMember";
 import PublicationsMember from "./components/PublicationMember";
 import MyDocumentsMember from "./components/MyDocumentsMember";
-import HelpDeskMember from "./components/HelpDeskmember";
+import HelpDeskMember from "./components/HelpDeskMember";
 
 
 export default function App() {
