@@ -23,7 +23,7 @@ export default function Dashboard() {
       {/* Welcome Banner */}
       <div className="bg-linear-to-r from-[#009966] to-[#009689] min-h-32 rounded-xl px-4 sm:px-6 py-4 sm:py-6 flex flex-col justify-center">
         <h2 className="text-xl sm:text-2xl lg:text-[28.44px] font-bold text-[#ffffff]">
-          Welcome back, Admin User
+          Welcome back, Admin User!
         </h2>
         <p className="text-sm sm:text-base lg:text-[17px] text-[#D0FAE5] mt-1">
           Stay updated with the latest policies, events, and industry insights from IWPA
@@ -42,14 +42,14 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Latest Notices */}
         <div className="lg:col-span-2 bg-card rounded-xl border-[0.76px] border-border p-4 sm:p-5">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold text-base sm:text-[17px] text-[#101828] flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4">
+            <h3 className="font-semibold text-[17px] text-[#101828] flex items-center gap-2">
               <div className="p-2 bg-[#E7F7EE] dark:bg-[#1F7A4D]/20 rounded-lg">
                 <Bell className="w-4.5 h-4.5 text-[#1F7A4D]" />
               </div>
               Latest Notice Uploads
             </h3>
-            <span className="text-[13.27px] text-[#242424] font-medium flex items-center gap-1 cursor-pointer">
+            <span className="text-xs sm:text-[13.27px] text-[#242424] font-medium flex items-center gap-1 cursor-pointer">
               View All <ArrowUpRight className="w-4 h-4" />
             </span>
           </div>
@@ -201,39 +201,32 @@ function Stat({ title, value, growth, icon, color, bg }: any) {
 
 function Notice({ title, tag, badge, council, date }: any) {
   return (
-    <div className="flex justify-between items-center py-4 border-t border-[#E5E7EB]">
-
-      <div>
-        <div className="flex items-center gap-2 mb-1">
+    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 py-4 border-t border-[#E5E7EB]">
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-1 flex-wrap">
           <h3 className="font-medium text-[17.06px] text-[#101828]">
             {title}
           </h3>
           {badge && (
-            <span className="px-2 py-0.5 bg-[#E7F7EE] text-[#1F7A4D] rounded">
+            <span className="px-2 py-0.5 bg-[#E7F7EE] text-[#1F7A4D] rounded text-xs">
               {badge}
             </span>
           )}
         </div>
-        {/* <p className="text-sm font-medium">{title}</p> */}
 
-        <div className="flex gap-2 mt-1 text-[13.27px]">
-
+        <div className="flex gap-2 mt-1 text-xs sm:text-[13.27px] flex-wrap">
           <span className="px-2 py-0.5 bg-[#F3F4F6] text-[11.38px] text-[#4A5565] rounded">
             {tag}
           </span>
-
           <span className="text-[#4A5565] text-[13.27px]">
             {council} · {date}
           </span>
-
         </div>
-
       </div>
 
-      <button className="text-[13.27px] font-medium text-[#242424]">
+      <button className="text-[13.27px] font-medium text-[#242424] cursor-pointer self-start sm:self-auto">
         Download
       </button>
-
     </div>
   )
 }

@@ -218,7 +218,7 @@ export default function App() {
           onToggleSidebar={handleToggleSidebar}
         />
 
-        <main className="p-6 md:p-8 overflow-x-hidden">
+        <main className="overflow-x-hidden">
           {renderContent()}
         </main>
       </div>
