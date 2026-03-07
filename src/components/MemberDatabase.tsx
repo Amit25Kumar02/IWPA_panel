@@ -15,9 +15,6 @@ import {
 } from "lucide-react";
 import AddNewMember from "./AddNewMember";
 
-/* -------------------------------------------------------------------------
-   MAIN PAGE – MemberDatabase
-   ------------------------------------------------------------------------- */
 export default function MemberDatabase() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);

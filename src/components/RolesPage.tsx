@@ -28,6 +28,7 @@ import { Badge } from './ui/badge';
 import { Card } from './ui/card';
 import { Separator } from './ui/separator';
 import { ScrollArea } from './ui/scroll-area';
+import './RolesPage.css';
 
 // ===== UI Theme Configuration =====
 const theme = {
@@ -53,11 +54,11 @@ const theme = {
     }
   },
   categories: [
-    { id: 'headquarters', name: 'Headquarters', icon: Building2, color: '#1F7A4D', bgColor: '#d0fae5', borderColor: '#a4f4cf' },
-    { id: 'national_council', name: 'National Council', icon: Shield, color: '#155DFC', bgColor: '#dbeafe', borderColor: '#93c5fd' },
-    { id: 'state_council', name: 'State Council', icon: MapPin, color: '#a855f7', bgColor: '#f3e8ff', borderColor: '#d8b4fe' },
-    { id: 'general', name: 'General', icon: Briefcase, color: '#f59e0b', bgColor: '#fef3c7', borderColor: '#fcd34d' },
-    { id: 'vendors', name: 'Vendors', icon: Users, color: '#10b981', bgColor: '#d1fae5', borderColor: '#6ee7b7'  },
+    { id: 'headquarters', name: 'Headquarters', icon: Building2, color: '#1F7A4D', bgColor: '#D0FAE5', borderColor: '#A4F4CF' },
+    { id: 'national_council', name: 'National Council', icon: Shield, color: '#155DFC', bgColor: '#DBEAFE', borderColor: '#BEDBFF' },
+    { id: 'state_council', name: 'State Council', icon: MapPin, color: '#9810FA', bgColor: '#F3E8FF', borderColor: '#E9D4FF' },
+    { id: 'general', name: 'General', icon: Briefcase, color: '#E17100', bgColor: '#FEF3C6', borderColor: '#FEE685' },
+    { id: 'vendors', name: 'Vendors', icon: Users, color: '#1F7A4D', bgColor: '#D0FAE5', borderColor: '#A4F4CF'  },
   ],
   getCategoryById: (id: string) => theme.categories.find(c => c.id === id)
 };
@@ -96,10 +97,12 @@ interface RoleInstance {
   website?: string;
   isDraft: boolean;
   permissions: {
-    noticeBoard: string[];
-    reports: string[];
-    approvals: string[];
-    chat: string[];
+    noticeBoard: string;
+    reports: string;
+    approvals: string;
+    chat: string;
+    email: string;
+    messaging: string;
   };
 }
 
@@ -171,10 +174,12 @@ export default function RolesPermissions() {
     website: '',
     isDraft: false,
     permissions: {
-      noticeBoard: ['View All'],
-      reports: ['View Reports'],
-      approvals: ['View Requests'],
-      chat: ['View Channels', 'Send Messages'],
+      noticeBoard: 'View All',
+      reports: 'View All',
+      approvals: 'View All',
+      chat: 'View All',
+      email: 'View All',
+      messaging: 'View All',
     },
   });
 
@@ -203,10 +208,12 @@ export default function RolesPermissions() {
       website: '',
       isDraft: false,
       permissions: {
-        noticeBoard: ['View All'],
-        reports: ['View Reports'],
-        approvals: ['View Requests'],
-        chat: ['View Channels', 'Send Messages'],
+        noticeBoard: 'View All',
+        reports: 'View All',
+        approvals: 'View All',
+        chat: 'View All',
+        email: 'View All',
+        messaging: 'View All',
       },
     });
     setMobileView('form');
@@ -229,10 +236,12 @@ export default function RolesPermissions() {
       website: '',
       isDraft: false,
       permissions: {
-        noticeBoard: ['View All'],
-        reports: ['View Reports'],
-        approvals: ['View Requests'],
-        chat: ['View Channels', 'Send Messages'],
+        noticeBoard: 'View All',
+        reports: 'View All',
+        approvals: 'View All',
+        chat: 'View All',
+        email: 'View All',
+        messaging: 'View All',
       },
     });
     setMobileView('form');
@@ -281,12 +290,12 @@ export default function RolesPermissions() {
         {/* Left Panel - Categories */}
         <div className="md:col-span-3">
           <Card className="h-fit flex flex-col">
-            <div className="p-6 border-b border-gray-200">
+            <div className="p-6 border-b-[0.76px] border-[#E5E7EB]">
               <div className="flex items-center gap-2 mb-2">
                 <Shield className="w-5 h-5" style={{ color: theme.colors.primary }} />
-                <h2 className="font-semibold text-gray-900">Role Categories</h2>
+                <h2 className="font-semibold text-[#242424] text-[18.96px]">Role Categories</h2>
               </div>
-              <p className="text-sm text-gray-500">Manage position-based roles</p>
+              <p className="text-[13.27px] text-[#6A7282]">Manage position-based roles</p>
             </div>
 
             <ScrollArea className="flex-1">
@@ -303,10 +312,10 @@ export default function RolesPermissions() {
                         setSelectedRole(null);
                       }}
                       style={{
-                        backgroundColor: isSelected ? `${category.bgColor}40` : 'white',
+                        backgroundColor: isSelected ? `${category.bgColor}70` : 'white',
                         borderColor: isSelected ? category.borderColor : theme.colors.gray[200],
                       }}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all border-2 hover:border-gray-300 cursor-pointer`}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all border-2 hover:border-[#E5E7EB] cursor-pointer`}
                     >
                       <div
                         style={{ backgroundColor: category.bgColor }}
@@ -334,11 +343,11 @@ export default function RolesPermissions() {
         {/* Middle Panel - Roles List */}
         <div className="md:col-span-3">
           <Card className="h-fit flex flex-col">
-            <div className="p-6 border-b border-gray-200">
+            <div className="p-6 border-b-[0.76px] border-[#E5E7EB]">
               {/* Council/State Selector */}
               {selectedCategory === 'state_council' && (
                 <div className="mb-4">
-                  <Label className="text-xs font-medium text-gray-700 mb-2 block">Select State</Label>
+                  <Label className="text-[13.27px] font-medium text-[#6A7282] mb-2 block">Select State</Label>
                   <select
                     value={selectedState}
                     onChange={(e) => setSelectedState(e.target.value)}
@@ -354,11 +363,11 @@ export default function RolesPermissions() {
 
               {selectedCategory === 'national_council' && (
                 <div className="mb-4">
-                  <Label className="text-xs font-medium text-gray-700 mb-2 block">Select Council</Label>
+                  <Label className="text-[13.27px] font-medium text-[#6A7282] mb-2 block">Select Council</Label>
                   <select
                     value={selectedCouncil}
                     onChange={(e) => setSelectedCouncil(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2"
+                    className="w-full px-3 py-2 border-[0.76px] border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2"
                     style={{ focusRingColor: theme.colors.primary }}
                   >
                     {councils.map(council => (
@@ -370,7 +379,7 @@ export default function RolesPermissions() {
 
               {/* Search */}
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#99A1AF]" />
                 <Input
                   placeholder="Search roles..."
                   value={searchQuery}
@@ -397,17 +406,17 @@ export default function RolesPermissions() {
 
                 {filteredRoles.length === 0 ? (
                   <div className="text-center py-8">
-                    <Users className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-sm text-gray-500">No roles found</p>
+                    <Users className="w-12 h-12 text-[#99A1AF] mx-auto mb-3" />
+                    <p className="text-sm text-[#6A7282]">No roles found</p>
                   </div>
                 ) : (
                   filteredRoles.map((role) => (
                     <button
                       key={role.id}
                       onClick={() => handleRoleSelect(role)}
-                      className={`w-full text-left p-4 rounded-lg border-2 transition-all cursor-pointer ${selectedRole?.id === role.id
+                      className={`w-full text-left p-4 rounded-lg border border-[#E5E7EB] transition-all cursor-pointer ${selectedRole?.id === role.id
                           ? 'bg-opacity-5'
-                          : 'bg-white hover:border-gray-300'
+                          : 'bg-[#ffffff] hover:border-[#E5E7EB]'
                         }`}
                       style={{
                         borderColor: selectedRole?.id === role.id ? `${theme.colors.primary}30` : theme.colors.gray[200],
@@ -415,12 +424,12 @@ export default function RolesPermissions() {
                       }}
                     >
                       <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-medium text-gray-900 text-sm">{role.title}</h3>
-                        <Badge variant="secondary" className="text-xs">
+                        <h3 className="font-medium text-[#242424] text-sm">{role.title}</h3>
+                        <Badge variant="secondary" className="text-xs text-[#242424]">
                           {role.activeInstances} active
                         </Badge>
                       </div>
-                      <p className="text-xs text-gray-500 mb-2">{role.description}</p>
+                      <p className="text-xs text-[#6A7282] mb-2">{role.description}</p>
                       {role.state && (
                         <Badge variant="outline" className="text-xs">
                           <MapPin className="w-3 h-3 mr-1" />
@@ -439,13 +448,13 @@ export default function RolesPermissions() {
         <div className="md:col-span-6">
           {showForm ? (
             <Card className="h-full flex flex-col">
-              <div className="p-6 border-b border-gray-200">
+              <div className="p-6 border-b-[0.8px] border-[#E5E7EB]">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-lg font-semibold text-gray-900">
+                    <h2 className="text-lg font-semibold text-[#101828]">
                       {selectedRole ? `New Instance: ${selectedRole.title}` : 'Create New Role'}
                     </h2>
-                    <p className="text-sm text-gray-500">Define role details and permissions</p>
+                    <p className="text-sm text-[#6A7282]">Define role details and permissions</p>
                   </div>
                   <Button
                     variant="ghost"
@@ -464,7 +473,7 @@ export default function RolesPermissions() {
                 <div className="p-6 space-y-6">
                   {/* Basic Information */}
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-[#101828] mb-4 flex items-center gap-2">
                       <FileText className="w-4 h-4" style={{ color: theme.colors.primary }} />
                       Basic Information
                     </h3>
@@ -688,58 +697,321 @@ export default function RolesPermissions() {
 
                   {/* Permissions Preview */}
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-[#101828] mb-4 flex items-center gap-2">
                       <Eye className="w-4 h-4" style={{ color: theme.colors.primary }} />
                       Permissions Preview
-                      <Badge variant="secondary" className="ml-2">Read-only</Badge>
+                      <Badge variant="secondary" className="ml-2 bg-[#F9FAFB] text-[#030213] rounded-[3px]">Read-only</Badge>
                     </h3>
 
                     <div className="space-y-4">
-                      <Card className="p-4" style={{ backgroundColor: '#dbeafe', borderColor: '#93c5fd' }}>
+                      <Card className="p-4" style={{ backgroundColor: '#EFF6FF', borderColor: '#BEDBFF' }}>
                         <div className="flex items-center gap-2 mb-3">
-                          <Bell className="w-4 h-4 text-blue-600" />
-                          <span className="text-sm font-medium text-blue-900">Notice Board</span>
+                          <Bell className="w-4 h-4 text-[#155DFC]" />
+                          <span className="text-sm font-medium text-[#1C398E]">Notice Board</span>
                         </div>
-                        <div className="flex flex-wrap gap-2">
-                          {formData.permissions?.noticeBoard.map(perm => (
-                            <Badge key={perm} variant="secondary" className="text-xs">{perm}</Badge>
-                          ))}
+                        <div className="flex gap-4">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="noticeBoard"
+                              value="View All"
+                              checked={formData.permissions?.noticeBoard === 'View All'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, noticeBoard: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#155DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">View All</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="noticeBoard"
+                              value="Modify"
+                              checked={formData.permissions?.noticeBoard === 'Modify'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, noticeBoard: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#155DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">Modify</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="noticeBoard"
+                              value="Edit"
+                              checked={formData.permissions?.noticeBoard === 'Edit'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, noticeBoard: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#155DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">Edit</span>
+                          </label>
                         </div>
                       </Card>
 
-                      <Card className="p-4" style={{ backgroundColor: '#f3e8ff', borderColor: '#d8b4fe' }}>
+                      <Card className="p-4" style={{ backgroundColor: '#FAF5FF', borderColor: '#E9D4FF' }}>
                         <div className="flex items-center gap-2 mb-3">
-                          <FileText className="w-4 h-4 text-purple-600" />
-                          <span className="text-sm font-medium text-purple-900">Reports</span>
+                          <FileText className="w-4 h-4 text-[#9810FA]" />
+                          <span className="text-sm font-medium text-[#59168B]">Reports</span>
                         </div>
-                        <div className="flex flex-wrap gap-2">
-                          {formData.permissions?.reports.map(perm => (
-                            <Badge key={perm} variant="secondary" className="text-xs">{perm}</Badge>
-                          ))}
+                        <div className="flex gap-4">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="reports"
+                              value="View All"
+                              checked={formData.permissions?.reports === 'View All'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, reports: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#155DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">View All</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="reports"
+                              value="Modify"
+                              checked={formData.permissions?.reports === 'Modify'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, reports: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#155DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">Modify</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="reports"
+                              value="Edit"
+                              checked={formData.permissions?.reports === 'Edit'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, reports: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#155DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">Edit</span>
+                          </label>
                         </div>
                       </Card>
 
-                      <Card className="p-4" style={{ backgroundColor: '#fef3c7', borderColor: '#fcd34d' }}>
+                      <Card className="p-4" style={{ backgroundColor: '#FFFBEB', borderColor: '#FEE685' }}>
                         <div className="flex items-center gap-2 mb-3">
-                          <CheckSquare className="w-4 h-4 text-amber-600" />
-                          <span className="text-sm font-medium text-amber-900">Approvals</span>
+                          <CheckSquare className="w-4 h-4 text-[#E17100]" />
+                          <span className="text-sm font-medium text-[#7B3306]">Approvals</span>
                         </div>
-                        <div className="flex flex-wrap gap-2">
-                          {formData.permissions?.approvals.map(perm => (
-                            <Badge key={perm} variant="secondary" className="text-xs">{perm}</Badge>
-                          ))}
+                        <div className="flex gap-4">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="approvals"
+                              value="View All"
+                              checked={formData.permissions?.approvals === 'View All'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, approvals: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#155DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">View All</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="approvals"
+                              value="Modify"
+                              checked={formData.permissions?.approvals === 'Modify'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, approvals: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#155DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">Modify</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="approvals"
+                              value="Edit"
+                              checked={formData.permissions?.approvals === 'Edit'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, approvals: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#155DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">Edit</span>
+                          </label>
                         </div>
                       </Card>
 
-                      <Card className="p-4" style={{ backgroundColor: `${theme.colors.primary}10`, borderColor: `${theme.colors.primary}30` }}>
+                      <Card className="p-4" style={{ backgroundColor: '#1F7A4D1A', borderColor: '#1F7A4D4D' }}>
+                        <div className="flex items-center gap-2 mb-3">
+                          <Mail className="w-4 h-4 text-[#1F7A4D]" />
+                          <span className="text-sm font-medium text-[#0D3D26]">E-mail</span>
+                        </div>
+                        <div className="flex gap-4">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="email"
+                              value="View All"
+                              checked={formData.permissions?.email === 'View All'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, email: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#157DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">View All</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="email"
+                              value="Modify"
+                              checked={formData.permissions?.email === 'Modify'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, email: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#157DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">Modify</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="email"
+                              value="Edit"
+                              checked={formData.permissions?.email === 'Edit'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, email: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#157DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">Edit</span>
+                          </label>
+                        </div>
+                      </Card>
+
+                      <Card className="p-4" style={{ backgroundColor: "#FFFBEB", borderColor: "#FEE685" }}>
                         <div className="flex items-center gap-2 mb-3">
                           <MessageSquare className="w-4 h-4" style={{ color: theme.colors.primary }} />
-                          <span className="text-sm font-medium" style={{ color: '#0D3D26' }}>Chat</span>
+                          <span className="text-sm font-medium" style={{ color: '#0D3D26' }}>Team Chat</span>
                         </div>
-                        <div className="flex flex-wrap gap-2">
-                          {formData.permissions?.chat.map(perm => (
-                            <Badge key={perm} variant="secondary" className="text-xs">{perm}</Badge>
-                          ))}
+                        <div className="flex gap-4">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="chat"
+                              value="View All"
+                              checked={formData.permissions?.chat === 'View All'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, chat: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#157DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                              
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">View All</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="chat"
+                              value="Modify"
+                              checked={formData.permissions?.chat === 'Modify'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, chat: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#157DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                           
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">Modify</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="chat"
+                              value="Edit"
+                              checked={formData.permissions?.chat === 'Edit'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, chat: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#157DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                             
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">Edit</span>
+                          </label>
+                        </div>
+                      </Card>
+
+                      
+
+                      <Card className="p-4" style={{ backgroundColor: '#FAF5FF', borderColor: '#E9D4FF' }}>
+                        <div className="flex items-center gap-2 mb-3">
+                          <MessageSquare className="w-4 h-4 text-[#9810FA]" />
+                          <span className="text-sm font-medium text-[#59168B]">Messaging</span>
+                        </div>
+                        <div className="flex gap-4">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="messaging"
+                              value="View All"
+                              checked={formData.permissions?.messaging === 'View All'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, messaging: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#155DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">View All</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="messaging"
+                              value="Modify"
+                              checked={formData.permissions?.messaging === 'Modify'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, messaging: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#155DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">Modify</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="messaging"
+                              value="Edit"
+                              checked={formData.permissions?.messaging === 'Edit'}
+                              onChange={(e) => setFormData(prev => ({
+                                ...prev,
+                                permissions: { ...prev.permissions!, messaging: e.target.value }
+                              }))}
+                              className="w-4 h-4 text-[#155DFC] bg-[#ffffff] border border-[#E5E5E5]"
+                            />
+                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">Edit</span>
+                          </label>
                         </div>
                       </Card>
                     </div>
@@ -748,12 +1020,12 @@ export default function RolesPermissions() {
               </ScrollArea>
 
               {/* Form Actions */}
-              <div className="p-6 border-t border-gray-200 bg-gray-50">
-                <div className="flex items-center justify-between">
-                  <Button variant="outline" onClick={() => handleSubmit(true)}>
+              <div>
+                <div className="flex items-center justify-end px-5 pb-5">
+                  {/* <Button variant="outline" onClick={() => handleSubmit(true)}>
                     <FileText className="w-4 h-4 mr-2" />
                     Save as Draft
-                  </Button>
+                  </Button> */}
                   <Button
                     style={{ backgroundColor: theme.colors.primary }}
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = theme.colors.primaryDark)}
