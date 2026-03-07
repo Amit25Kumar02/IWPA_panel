@@ -78,7 +78,7 @@ export default function TeamChat() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6a7282]" />
               <input
                 placeholder="Search discussions..."
-                className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D] focus:border-[#1F7A4D]"
+                className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-[#e5e7eb] rounded-lg outline-none"
               />
             </div>
           </div>
@@ -150,7 +150,7 @@ export default function TeamChat() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Type your message..."
-                className="flex-1 px-3 sm:px-4 py-2 text-sm border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D] focus:border-[#1F7A4D]"
+                className="flex-1 px-3 sm:px-4 py-2 text-sm border border-[#e5e7eb] rounded-lg outline-none focus:border-[#1F7A4D]"
               />
               <button className="px-3 sm:px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939]">
                 <Send className="w-5 h-5" />

@@ -136,7 +136,7 @@ export default function Messages() {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1 px-4 py-2 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+            className="flex-1 px-4 py-2 border border-[#e5e7eb] rounded-lg outline-none"
           />
           <button className="px-6 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] transition flex items-center gap-2">
             <Send className="w-4 h-4" />

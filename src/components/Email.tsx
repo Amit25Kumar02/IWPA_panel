@@ -135,7 +135,7 @@ export default function Email() {
                 placeholder="Search emails..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D] focus:outline-none"
+                className="w-full pl-10 pr-4 py-2 border border-[#e5e7eb] rounded-lg outline-none"
               />
             </div>
           </div>

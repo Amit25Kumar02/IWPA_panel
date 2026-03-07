@@ -12,6 +12,7 @@ import {
   MapPin,
   UserPlus,
   Building,
+  Trash2,
 } from "lucide-react";
 import AddNewMember from "./AddNewMember";
 
@@ -169,7 +170,7 @@ export default function MemberDatabase() {
               placeholder="Search members by name, ID, or contact person..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D] focus:border-[#1F7A4D] transition-colors"
+              className="w-full pl-10 pr-4 py-2.5 border border-[#e5e7eb] rounded-lg outline-none"
             />
           </div>
 
@@ -178,7 +179,7 @@ export default function MemberDatabase() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D] focus:border-[#1F7A4D] transition-colors appearance-none"
+              className="w-full pl-10 pr-4 py-2.5 border-[0.76px] border-[#e5e7eb] rounded-lg outline-none appearance-none"
             >
               <option value="all">All Status</option>
               <option value="Active">Active</option>
@@ -191,7 +192,7 @@ export default function MemberDatabase() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D] focus:border-[#1F7A4D] transition-colors appearance-none"
+              className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-lg outline-none appearance-none"
             >
               <option value="all">All Types</option>
               <option value="Corporate">Corporate</option>
@@ -308,6 +309,12 @@ export default function MemberDatabase() {
                             >
                               <Edit className="w-4 h-4" />
                             </button>
+                               <button
+                                // onClick={() => handleDelete(latestDoc.id, latestDoc.documentNumber)}
+                                className="p-2 hover:bg-red-50 rounded-lg text-[#FB2C36] transition-colors cursor-pointer"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
                           </div>
                         </td>
                       </tr>

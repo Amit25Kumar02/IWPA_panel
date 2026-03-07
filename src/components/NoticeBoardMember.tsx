@@ -7,10 +7,9 @@ import {
   Search,
   Filter,
   Smartphone,
-  Trash2,
 } from "lucide-react";
 
-export default function NoticeBoard() {
+export default function NoticeBoardMember() {
   const [activeTab, setActiveTab] = useState("National Council");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -138,7 +137,7 @@ export default function NoticeBoard() {
             placeholder="Search notices..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 border border-[#e5e7eb] rounded-lg outline-none"
+            className="w-full pl-10 pr-4 py-2.5 border-[0.76px] border-[#e5e7eb] rounded-lg outline-none transition-colors"
           />
         </div>
         <div className="relative sm:w-48">
@@ -146,7 +145,7 @@ export default function NoticeBoard() {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 border border-[#e5e7eb] rounded-lg outline-none appearance-none"
+            className="w-full pl-10 pr-4 py-2.5 border-[0.76px] border-[#e5e7eb] rounded-lg outline-none transition-colors appearance-none"
           >
             {categories.map((cat) => (
               <option key={cat} value={cat}>
@@ -215,12 +214,6 @@ export default function NoticeBoard() {
                         </button>
                         <button className="p-2 hover:bg-green-50 rounded-lg text-[#1F7A4D] transition-colors cursor-pointer">
                           <Download className="w-5 h-5" />
-                        </button>
-                        <button
-                          // onClick={() => handleDelete(latestDoc.id, latestDoc.documentNumber)}
-                          className="p-2 hover:bg-red-50 rounded-lg text-[#FB2C36] transition-colors cursor-pointer"
-                        >
-                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </td>

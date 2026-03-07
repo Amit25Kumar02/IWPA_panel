@@ -126,7 +126,7 @@ export default function Reporting() {
             <select
               value={reportType}
               onChange={(e) => setReportType(e.target.value)}
-              className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+              className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-lg outline-none"
             >
               <option>Membership Report</option>
               <option>Subscription Status</option>
@@ -143,7 +143,7 @@ export default function Reporting() {
             <select
               value={stateFilter}
               onChange={(e) => setStateFilter(e.target.value)}
-              className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+              className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-lg outline-none"
             >
               <option>All States</option>
               <option>Maharashtra</option>
@@ -159,7 +159,7 @@ export default function Reporting() {
             <select
               value={periodFilter}
               onChange={(e) => setPeriodFilter(e.target.value)}
-              className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+              className="w-full px-4 py-2.5 border border-[#e5e7eb] rounded-lg outline-none"
             >
               <option>This Year</option>
               <option>This Quarter</option>

@@ -227,7 +227,7 @@ export default function MyDocuments() {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D] focus:border-[#1F7A4D] transition-colors appearance-none"
+            className="w-full pl-10 pr-4 py-2.5 border border-[#e5e7eb] rounded-lg outline-none appearance-none"
           >
             <option value="all">All Documents</option>
             <option value="Proforma Invoice">Proforma Invoices</option>
@@ -308,14 +308,14 @@ export default function MyDocuments() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-2">
-                          {docCount > 1 ? (
+                          {/* {docCount > 1 ? (
                             <button
                               onClick={() => openDocumentDrawer(docs[0].membershipId, docs[0].category)}
                               className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] transition-colors cursor-pointer"
                             >
                               <Eye className="w-4 h-4" />
                             </button>
-                          ) : (
+                          ) : ( */}
                             <>
                               <button className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] transition-colors cursor-pointer">
                                 <Eye className="w-4 h-4" />
@@ -328,12 +328,12 @@ export default function MyDocuments() {
                               </button>
                               <button
                                 onClick={() => handleDelete(latestDoc.id, latestDoc.documentNumber)}
-                                className="p-2 hover:bg-red-50 rounded-lg text-red-500 transition-colors cursor-pointer"
+                                className="p-2 hover:bg-red-50 rounded-lg text-[#FB2C36] transition-colors cursor-pointer"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             </>
-                          )}
+                          {/* )} */}
                         </div>
                       </td>
                     </tr>
@@ -348,7 +348,7 @@ export default function MyDocuments() {
       {/* Info Card */}
       <div className="bg-linear-to-br from-[#ecfdf5] to-[#ffffff] rounded-lg border border-[#a4f4cf] p-6">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 bg-[#1F7A4D] rounded-lg flex items-center justify-center flex-shrink-0">
+          <div className="w-12 h-12 bg-[#1F7A4D] rounded-lg flex items-center justify-center shrink-0">
             <FileText className="w-6 h-6 text-[#ffffff]" />
           </div>
           <div className="flex-1">
@@ -375,8 +375,8 @@ export default function MyDocuments() {
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <Trash2 className="w-6 h-6 text-red-500" />
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center shrink-0">
+                <Trash2 className="w-6 h-6 text-[#FB2C36]" />
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-[#242424] mb-2">Delete Document</h3>
@@ -394,7 +394,7 @@ export default function MyDocuments() {
                   </button>
                   <button
                     onClick={confirmDelete}
-                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium cursor-pointer"
+                    className="px-4 py-2 bg-[#FB2C36] text-white rounded-lg  transition-colors font-medium cursor-pointer"
                   >
                     Delete
                   </button>

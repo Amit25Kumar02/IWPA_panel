@@ -32,6 +32,7 @@ interface SidebarProps {
   isMobile?: boolean;
   onClose?: () => void;
   onLogout?: () => void;
+  userType?: 'admin' | 'member';
 }
 
 export function Sidebar({
@@ -41,6 +42,7 @@ export function Sidebar({
   isMobile = false,
   onClose,
   onLogout,
+  userType = 'admin',
 }: SidebarProps) {
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [showLogout, setShowLogout] = useState(false);
@@ -50,7 +52,7 @@ export function Sidebar({
     if (data) setUser(JSON.parse(data));
   }, []);
 
-  const navItems = [
+  const adminNavItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "rolespage", label: "Roles & Permissions", icon: Shield },
     { id: "sports", label: "Member Database", icon: Users },
@@ -69,6 +71,18 @@ export function Sidebar({
     { id: "helpDesk", label: "Help Desk", icon: HelpCircle },
   ];
 
+  const memberNavItems = [
+    { id: "dashboardmember", label: "Dashboard", icon: LayoutDashboard },
+    { id: "noticeBoardmember", label: "Notice Board", icon: Bell },
+    { id: "eventsmember", label: "Events", icon: Calendar },
+    { id: "subscriptionsmember", label: "Subscriptions", icon: CreditCard },
+    { id: "publicationsmember", label: "Publications", icon: BookOpen },
+    { id: "myDocumentsmember", label: "My Documents", icon: FolderOpen },
+        { id: "helpDeskmember", label: "Help Desk", icon: HelpCircle },
+  ];
+
+  const navItems = userType === 'admin' ? adminNavItems : memberNavItems;
+
   return (
     <aside
       className={`
@@ -86,12 +100,12 @@ export function Sidebar({
             alt="IWPA"
             className="h-10.75 w-13.25"
           />
-           <img
+          <img
             src="/iwpa_logo1.png"
             alt="IWPA"
             className="h-9 w-30.75"
           />
-          
+
         </div>
 
         {isMobile && (
@@ -115,10 +129,9 @@ export function Sidebar({
                   className={`
                     w-full flex items-center gap-3 px-4 py-2.5 rounded-lg
                     text-[15px] font-medium transition-colors cursor-pointer
-                    ${
-                      active
-                        ? "bg-[#F6F8FA] text-[#1F7A4D] border-l-2 border-[#1F7A4D]"
-                        : "text-[#242424] hover:bg-[#f9fafb]"
+                    ${active
+                      ? "bg-[#F6F8FA] text-[#1F7A4D] border-l-2 border-[#1F7A4D]"
+                      : "text-[#242424] hover:bg-[#f9fafb]"
                     }
                   `}
                 >
@@ -163,7 +176,7 @@ export function Sidebar({
                   onLogout?.();
                   setShowLogout(false);
                 }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition"
+                className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
                 Sign Out

@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { Menu, User } from "lucide-react";
 
+
+
 interface TopNavProps {
   activeSection: string;
   onToggleSidebar?: () => void;
@@ -10,13 +12,18 @@ interface TopNavProps {
 
 const sectionTitles: Record<string, string> = {
   dashboard: "Dashboard",
+  dashboardmember: "Dashboard",
   rolespage: "Roles & Permissions",
   sports: "Member Database",
   subscriptions: "Subscriptions",
+  subscriptionsmember: "Subscriptions",
   noticeBoard: "Notice Board",
+  noticeBoardmember: "Notice Board",
   myDocuments: "My Documents",
+  myDocumentsmember: "My Documents",
   formPortal: "Form Portal",
   publications: "Publications",
+  publicationsmember: "Publications",
   adBooking: "Ad Booking",
   reporting: "Reporting",
   accounting: "Accounting",
@@ -24,7 +31,9 @@ const sectionTitles: Record<string, string> = {
   email: "Email",
   messages: "Messages",
   helpDesk: "Help Desk",
+  helpDeskMember: "Help Desk",
   events: "Events",
+  eventsmember: "Events",
 };
 
 function useIsDesktop() {

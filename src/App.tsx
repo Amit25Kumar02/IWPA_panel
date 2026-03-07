@@ -4,10 +4,12 @@ import { Signup } from "./components/Signup";
 import { Sidebar } from "./components/Sidebar";
 import { TopNav } from "./components/TopNav";
 import  Dashboard  from "./components/Dashboard";
+import DashboardMember from "./components/DashboardMember";
 import CategoryManager from "./components/RolesPage";
 import SportsManagement from "./components/MemberDatabase";
 import Subscriptions from "./components/Subscriptions";
 import NoticeBoard from "./components/NoticeBoard";
+import NoticeBoardMember from "./components/NoticeBoardMember";
 import MyDocuments from "./components/MyDocuments";
 import FormPortal from "./components/FormPortal";
 import Publications from "./components/Publication";
@@ -19,12 +21,20 @@ import Email from "./components/Email";
 import Messages from "./components/Message";
 import HelpDesk from "./components/HelpDesk";
 import Events from "./components/Events";
+import EventsMemberPage from "./components/EventsMember";
+import SubscriptionMemberPage from "./components/SubscriptionsMember";
+import PublicationsMember from "./components/PublicationMember";
+import MyDocumentsMember from "./components/MyDocumentsMember";
+import HelpDeskMember from "./components/HelpDeskmember";
 
 
 export default function App() {
   const [showSignup, setShowSignup] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return localStorage.getItem('isAuthenticated') === 'true';
+  });
+  const [userType, setUserType] = useState<'admin' | 'member'>(() => {
+    return (localStorage.getItem('userType') as 'admin' | 'member') || 'admin';
   });
 
   // Set theme based on authentication status
@@ -85,14 +95,22 @@ export default function App() {
     return () => window.removeEventListener('popstate', handleNavigation);
   }, []);
 
-  const handleLogin = () => {
+  const handleLogin = (type: 'admin' | 'member') => {
     setIsAuthenticated(true);
+    setUserType(type);
     localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem('userType', type);
+    
+    // Set initial section based on user type
+    const initialSection = type === 'member' ? 'dashboardmember' : 'dashboard';
+    setActiveSection(initialSection);
+    localStorage.setItem('activeSection', initialSection);
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userType');
     localStorage.removeItem('activeSection');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -115,16 +133,28 @@ export default function App() {
 
   const renderContent = () => {
     console.log('Active section:', activeSection);
+    
+    // For member users, redirect dashboard to dashboardmember
+    if (userType === 'member' && activeSection === 'dashboard') {
+      return <DashboardMember />;
+    }
+    
     switch (activeSection) {
       case "dashboard": return <Dashboard />;
+      case "dashboardmember": return <DashboardMember />;
       case "rolespage": return <CategoryManager />;
       case "sports": return <SportsManagement />;
       case "subscriptions": return <Subscriptions />;
+      case "subscriptionsmember": return <SubscriptionMemberPage />;
       case "noticeBoard": return <NoticeBoard />;
+      case "noticeBoardmember": return <NoticeBoardMember />;
       case "myDocuments": return <MyDocuments />;
+      case "myDocumentsmember": return <MyDocumentsMember />;
       case "formPortal": return <FormPortal />;
       case "publications": return <Publications />;
+      case "publicationsmember": return <PublicationsMember />;
       case "events": return <Events />;
+      case "eventsmember": return <EventsMemberPage />;
       case "adBooking": return <AdBooking />;
       case "reporting": return <Reporting />;
       case "accounting": return <Accounting />;
@@ -132,7 +162,8 @@ export default function App() {
       case "email": return <Email />;
       case "messages": return <Messages />;
       case "helpDesk": return <HelpDesk />;
-      default: return <Dashboard />;
+      case "helpDeskmember": return <HelpDeskMember />;
+      default: return userType === 'member' ? <DashboardMember /> : <Dashboard />;
     }
   };
 
@@ -177,6 +208,7 @@ export default function App() {
         onClose={handleCloseSidebar}
         isMobile={isMobile}
         onLogout={handleLogout}
+        userType={userType}
       />
 
       <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen && !isMobile ? "ml-64" : "ml-0"

@@ -8,7 +8,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
 interface LoginProps {
-  onLogin: () => void;
+  onLogin: (userType: 'admin' | 'member') => void;
 }
 
 export function Login({ onLogin }: LoginProps) {
@@ -30,11 +30,23 @@ export function Login({ onLogin }: LoginProps) {
         password === "iwpa@123"
       ) {
         localStorage.setItem("token", "dummy-token");
+        localStorage.setItem("userType", "admin");
         localStorage.setItem(
           "user",
           JSON.stringify({ name: "Admin User", email })
         );
-        onLogin();
+        onLogin('admin');
+      } else if (
+        email === "iwpamember@gmail.com" &&
+        password === "iwpa@123"
+      ) {
+        localStorage.setItem("token", "dummy-token");
+        localStorage.setItem("userType", "member");
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ name: "Member User", email })
+        );
+        onLogin('member');
       } else {
         setError("Invalid email or password");
       }
@@ -43,7 +55,7 @@ export function Login({ onLogin }: LoginProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#0B3C5D] to-[#0B3C5D] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-r from-[#0B3C5D] to-[#0B3C5D] px-4">
       <div className="w-full max-w-md">
         <Card className="p-6 rounded-xl shadow-xl bg-[#FFFFFF] border-[0.76px] border-[#E5E7EB]">
           {/* Logo */}
@@ -120,7 +132,7 @@ export function Login({ onLogin }: LoginProps) {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    className="w-[11.871px] h-[11.871px] border-[1px] border-[#c9c9c9] rounded-[2.739px] appearance-none checked:bg-[#1F7A4D] checked:border-[#1F7A4D] cursor-pointer mt-1"
+                    className="w-[11.871px] h-[11.871px] border border-[#c9c9c9] rounded-[2.739px] appearance-none checked:bg-[#1F7A4D] checked:border-[#1F7A4D] cursor-pointer mt-1"
                   />
                   {rememberMe && (
                     <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 12 12" fill="none">

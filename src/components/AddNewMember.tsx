@@ -35,7 +35,7 @@ interface WindRow {
   connectedSubstation: string;
 }
 
-export default function AddNewMember({ onClose }: { onClose: () => void }) {
+export default function AddNewMember({ onClose, initialData }: { onClose: () => void; initialData?: any }) {
   const [formData, setFormData] = useState({
     state: "",
     category: "",
@@ -138,11 +138,11 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
           <Section title="Auto Configuration">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <Label>Select State *</Label>
+                <Label>Select State <span className="text-[#FB2C36]">*</span></Label>
                 <select
                   value={formData.state}
                   onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                 >
                   <option value="">Select State</option>
                   {states.map((s) => (
@@ -153,11 +153,11 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
                 </select>
               </div>
               <div>
-                <Label>Select Category *</Label>
+                <Label>Select Category <span className="text-[#FB2C36]">*</span></Label>
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                 >
                   <option value="">Select Category</option>
                   {categories.map((cat) => (
@@ -214,22 +214,32 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
           <Section title="Company Details">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
-                <Label>Company Name *</Label>
+                <Label>Company Name <span className="text-[#FB2C36]">*</span></Label>
                 <input
                   type="text"
                   value={formData.companyName}
                   onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                   placeholder="Enter company name"
                 />
               </div>
+                            <div className="md:col-span-2">
+                <Label>Enter GROUP Company Name (if applicable)</Label>
+                <input
+                  type="text"
+                  value={formData.companyName}
+                  onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
+                  placeholder="Enter Group company name"
+                />
+              </div>
               <div className="md:col-span-2">
-                <Label>Address for Correspondence *</Label>
+                <Label>Address for Correspondence <span className="text-[#FB2C36]">*</span></Label>
                 <textarea
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                   rows={3}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                   placeholder="Enter complete address"
                 />
               </div>
@@ -239,7 +249,7 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
                   type="tel"
                   value={formData.officePhone}
                   onChange={(e) => setFormData({ ...formData, officePhone: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                   placeholder="+91 XXXXX XXXXX"
                 />
               </div>
@@ -249,7 +259,7 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
                   type="text"
                   value={formData.gstNo}
                   onChange={(e) => setFormData({ ...formData, gstNo: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                   placeholder="Enter GST number"
                 />
               </div>
@@ -260,21 +270,21 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
           <Section title="Authorized Representative">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label>Name *</Label>
+                <Label>Name <span className="text-[#FB2C36]">*</span></Label>
                 <input
                   type="text"
                   value={formData.repName}
                   onChange={(e) => setFormData({ ...formData, repName: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                 />
               </div>
               <div>
-                <Label>Designation *</Label>
+                <Label>Designation <span className="text-[#FB2C36]">*</span></Label>
                 <input
                   type="text"
                   value={formData.repDesignation}
                   onChange={(e) => setFormData({ ...formData, repDesignation: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                 />
               </div>
               <div>
@@ -283,25 +293,25 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
                   type="tel"
                   value={formData.repOfficePhone}
                   onChange={(e) => setFormData({ ...formData, repOfficePhone: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                 />
               </div>
               <div>
-                <Label>Mobile *</Label>
+                <Label>Mobile <span className="text-[#FB2C36]">*</span></Label>
                 <input
                   type="tel"
                   value={formData.repMobile}
                   onChange={(e) => setFormData({ ...formData, repMobile: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                 />
               </div>
               <div className="md:col-span-2">
-                <Label>Email *</Label>
+                <Label>Email <span className="text-[#FB2C36]">*</span></Label>
                 <input
                   type="email"
                   value={formData.repEmail}
                   onChange={(e) => setFormData({ ...formData, repEmail: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                   placeholder="email@example.com"
                 />
               </div>
@@ -371,7 +381,7 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
                               type="text"
                               value={row.location}
                               onChange={(e) => updateWindRow(row.id, "location", e.target.value)}
-                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded focus:ring-2 focus:ring-[#1F7A4D] text-sm"
+                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
                               placeholder="Location"
                             />
                           </td>
@@ -380,7 +390,7 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
                               type="text"
                               value={row.noOfWindMills}
                               onChange={(e) => updateWindRow(row.id, "noOfWindMills", e.target.value)}
-                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded focus:ring-2 focus:ring-[#1F7A4D] text-sm"
+                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
                               placeholder="No."
                             />
                           </td>
@@ -389,7 +399,7 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
                               type="text"
                               value={row.ratedCapacity}
                               onChange={(e) => updateWindRow(row.id, "ratedCapacity", e.target.value)}
-                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded focus:ring-2 focus:ring-[#1F7A4D] text-sm"
+                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
                               placeholder="Capacity"
                             />
                           </td>
@@ -398,7 +408,7 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
                               type="text"
                               value={row.totalMW}
                               onChange={(e) => updateWindRow(row.id, "totalMW", e.target.value)}
-                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded focus:ring-2 focus:ring-[#1F7A4D] text-sm"
+                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
                               placeholder="MW"
                             />
                           </td>
@@ -407,7 +417,7 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
                               type="text"
                               value={row.make}
                               onChange={(e) => updateWindRow(row.id, "make", e.target.value)}
-                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded focus:ring-2 focus:ring-[#1F7A4D] text-sm"
+                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
                               placeholder="Make"
                             />
                           </td>
@@ -416,7 +426,7 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
                               type="text"
                               value={row.connectedSubstation}
                               onChange={(e) => updateWindRow(row.id, "connectedSubstation", e.target.value)}
-                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded focus:ring-2 focus:ring-[#1F7A4D] text-sm"
+                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
                               placeholder="Substation"
                             />
                           </td>
@@ -447,7 +457,7 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
                   value={formData.businessDescription}
                   onChange={(e) => setFormData({ ...formData, businessDescription: e.target.value })}
                   rows={3}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                   placeholder="Describe your business activities..."
                 />
               </div>
@@ -457,7 +467,7 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
                   type="text"
                   value={formData.chairmanMD}
                   onChange={(e) => setFormData({ ...formData, chairmanMD: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                   placeholder="Name and designation"
                 />
               </div>
@@ -467,7 +477,7 @@ export default function AddNewMember({ onClose }: { onClose: () => void }) {
                   value={formData.groupCompany}
                   onChange={(e) => setFormData({ ...formData, groupCompany: e.target.value })}
                   rows={2}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg focus:ring-2 focus:ring-[#1F7A4D]"
+                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                   placeholder="Enter group company details if applicable"
                 />
                 <p className="text-xs text-[#6a7282] mt-1">
