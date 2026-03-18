@@ -11,6 +11,7 @@ import {
   Upload,
   X,
   Edit,
+  Plus,
   Layers,
 } from "lucide-react";
 
@@ -47,7 +48,7 @@ export default function MyDocuments() {
       description: "Proforma Invoice FY 2026-27",
       date: "2026-01-14",
       amount: "₹1,50,000",
-      category: "Proforma Invoice",
+      category: "Invoice",
       membershipId: "MEM-2026-001",
       version: 1,
     },
@@ -58,7 +59,7 @@ export default function MyDocuments() {
       description: "Proforma Invoice FY 2026-27 (Revised)",
       date: "2026-01-15",
       amount: "₹1,50,000",
-      category: "Proforma Invoice",
+      category: "Invoice",
       membershipId: "MEM-2026-001",
       version: 2,
     },
@@ -90,7 +91,7 @@ export default function MyDocuments() {
       description: "IWPA Membership Certificate 2026-27",
       date: "2026-01-17",
       amount: "-",
-      category: "Certificate",
+      category: "Certificates",
       membershipId: "MEM-2026-001",
     },
     {
@@ -102,29 +103,7 @@ export default function MyDocuments() {
       amount: "₹1,50,000",
       category: "Receipt",
       membershipId: "MEM-2026-001",
-    },
-    {
-      id: 7,
-      type: "Receipt",
-      documentNumber: "REC-2026-001-V2",
-      description: "Payment Receipt (Updated)",
-      date: "2026-01-17",
-      amount: "₹1,50,000",
-      category: "Receipt",
-      membershipId: "MEM-2026-001",
-      version: 2,
-    },
-    {
-      id: 8,
-      type: "Receipt",
-      documentNumber: "REC-2026-001-V3",
-      description: "Payment Receipt (Final)",
-      date: "2026-01-18",
-      amount: "₹1,50,000",
-      category: "Receipt",
-      membershipId: "MEM-2026-001",
-      version: 3,
-    },
+    }
   ]);
 
   const filteredDocuments = documents.filter((doc) => {
@@ -140,13 +119,13 @@ export default function MyDocuments() {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "Proforma Invoice":
+      case "Invoice":
         return { bg: "#e0e7ff", text: "#6366f1" };
       case "Receipt":
         return { bg: "#d0fae5", text: "#1F7A4D" };
       case "Tax Invoice":
         return { bg: "#dbeafe", text: "#155DFC" };
-      case "Certificate":
+      case "Certificates":
         return { bg: "#fef3c7", text: "#f59e0b" };
       default:
         return { bg: "#f3f4f6", text: "#6a7282" };
@@ -155,9 +134,9 @@ export default function MyDocuments() {
 
   const documentStats = [
     { label: "Total Documents", value: documents.length, icon: FileText, color: "#1F7A4D", bgColor: "#d0fae5" },
-    { label: "Proforma Invoices", value: documents.filter(d => d.category === "Proforma Invoice").length, icon: FileText, color: "#6366f1", bgColor: "#e0e7ff" },
-    { label: "Tax Invoices", value: documents.filter(d => d.category === "Tax Invoice").length, icon: FileText, color: "#155DFC", bgColor: "#dbeafe" },
+    { label: "Invoices", value: documents.filter(d => d.category === "Invoice").length, icon: FileText, color: "#155DFC", bgColor: "#DBEAFE" },
     { label: "Receipts", value: documents.filter(d => d.category === "Receipt").length, icon: FileText, color: "#1F7A4D", bgColor: "#d0fae5" },
+    { label: "Certificates", value: documents.filter(d => d.category === "Certificates").length, icon: FileText, color: "#F59E0B", bgColor: "#FEF3C7" },
   ];
 
   const handleDelete = (documentId: number, documentName: string) => {
@@ -184,12 +163,18 @@ export default function MyDocuments() {
     setDocumentDrawer({ show: false, membershipId: "", category: "", documents: [] });
   };
 
-  const handleUploadNewDocument = () => {
-    alert("Upload new document functionality");
+  const [addModal, setAddModal] = useState(false);
+  const [addForm, setAddForm] = useState({ type: "", documentNumber: "", description: "", date: "", amount: "", category: "Invoice", membershipId: "" });
+
+  const handleAddDocument = () => {
+    if (!addForm.type.trim() || !addForm.documentNumber.trim() || !addForm.date) return;
+    setDocuments(prev => [...prev, { id: Date.now(), ...addForm, version: 1 }]);
+    setAddModal(false);
+    setAddForm({ type: "", documentNumber: "", description: "", date: "", amount: "", category: "Invoice", membershipId: "" });
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-[#242424]">My Documents</h1>
@@ -222,7 +207,7 @@ export default function MyDocuments() {
 
       {/* Filter */}
       <div className="flex items-center gap-4">
-        <div className="relative flex-1 sm:flex-initial sm:w-64">
+        <div className="relative w-61">
           <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6a7282] pointer-events-none" />
           <select
             value={categoryFilter}
@@ -236,6 +221,13 @@ export default function MyDocuments() {
             <option value="Certificate">Certificates</option>
           </select>
         </div>
+        <button
+          onClick={() => setAddModal(true)}
+          className="ml-auto inline-flex items-center gap-2 px-4 py-2.5 bg-[#1F7A4D] text-[#ffffff] rounded-lg hover:bg-[#176939] transition-colors font-medium cursor-pointer"
+        >
+          <Plus className="w-4 h-4" />
+          Add Document
+        </button>
       </div>
 
       {/* Document List - Grouped by Category */}
@@ -346,7 +338,7 @@ export default function MyDocuments() {
       </div>
 
       {/* Info Card */}
-      <div className="bg-linear-to-br from-[#ecfdf5] to-[#ffffff] rounded-lg border border-[#a4f4cf] p-6">
+      {/* <div className="bg-linear-to-br from-[#ecfdf5] to-[#ffffff] rounded-lg border border-[#a4f4cf] p-6">
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 bg-[#1F7A4D] rounded-lg flex items-center justify-center shrink-0">
             <FileText className="w-6 h-6 text-[#ffffff]" />
@@ -362,7 +354,7 @@ export default function MyDocuments() {
             </p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Results Count */}
       <div className="text-sm text-[#6a7282]">
@@ -400,6 +392,80 @@ export default function MyDocuments() {
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Document Modal */}
+      {addModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-bold text-[#242424]">Add Document</h3>
+              <button onClick={() => setAddModal(false)} className="p-2 hover:bg-[#f3f4f6] rounded-lg cursor-pointer">
+                <X className="w-5 h-5 text-[#6a7282]" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-[#242424] mb-1">Document Type <span className="text-[#FB2C36]">*</span></label>
+                  <input type="text" value={addForm.type} onChange={e => setAddForm(f => ({ ...f, type: e.target.value }))}
+                    placeholder="e.g. Tax Invoice"
+                    className="w-full px-3 py-2.5 border border-[#e5e7eb] rounded-lg outline-none text-sm focus:border-[#1F7A4D]" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#242424] mb-1">Document Number <span className="text-[#FB2C36]">*</span></label>
+                  <input type="text" value={addForm.documentNumber} onChange={e => setAddForm(f => ({ ...f, documentNumber: e.target.value }))}
+                    placeholder="e.g. TAX-2026-007"
+                    className="w-full px-3 py-2.5 border border-[#e5e7eb] rounded-lg outline-none text-sm focus:border-[#1F7A4D]" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-[#242424] mb-1">Category</label>
+                  <select value={addForm.category} onChange={e => setAddForm(f => ({ ...f, category: e.target.value }))}
+                    className="w-full px-3 py-2.5 border border-[#e5e7eb] rounded-lg outline-none text-sm focus:border-[#1F7A4D] bg-white">
+                    <option value="Invoice">Invoice</option>
+                    <option value="Tax Invoice">Tax Invoice</option>
+                    <option value="Receipt">Receipt</option>
+                    <option value="Certificates">Certificates</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#242424] mb-1">Membership ID</label>
+                  <input type="text" value={addForm.membershipId} onChange={e => setAddForm(f => ({ ...f, membershipId: e.target.value }))}
+                    placeholder="e.g. MEM-2026-001"
+                    className="w-full px-3 py-2.5 border border-[#e5e7eb] rounded-lg outline-none text-sm focus:border-[#1F7A4D]" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-[#242424] mb-1">Date <span className="text-[#FB2C36]">*</span></label>
+                  <input type="date" value={addForm.date} onChange={e => setAddForm(f => ({ ...f, date: e.target.value }))}
+                    className="w-full px-3 py-2.5 border border-[#e5e7eb] rounded-lg outline-none text-sm focus:border-[#1F7A4D]" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#242424] mb-1">Amount</label>
+                  <input type="text" value={addForm.amount} onChange={e => setAddForm(f => ({ ...f, amount: e.target.value }))}
+                    placeholder="e.g. ₹1,50,000"
+                    className="w-full px-3 py-2.5 border border-[#e5e7eb] rounded-lg outline-none text-sm focus:border-[#1F7A4D]" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#242424] mb-1">Description</label>
+                <input type="text" value={addForm.description} onChange={e => setAddForm(f => ({ ...f, description: e.target.value }))}
+                  placeholder="Brief description of the document"
+                  className="w-full px-3 py-2.5 border border-[#e5e7eb] rounded-lg outline-none text-sm focus:border-[#1F7A4D]" />
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button onClick={() => setAddModal(false)} className="flex-1 py-2.5 border border-[#e5e7eb] text-[#242424] rounded-lg text-sm font-medium hover:bg-[#f9fafb] transition-colors cursor-pointer">Cancel</button>
+              <button onClick={handleAddDocument} disabled={!addForm.type.trim() || !addForm.documentNumber.trim() || !addForm.date}
+                className="flex-1 py-2.5 bg-[#1F7A4D] text-white rounded-lg text-sm font-medium hover:bg-[#176939] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2">
+                <Plus className="w-4 h-4" /> Add Document
+              </button>
             </div>
           </div>
         </div>
@@ -496,7 +562,7 @@ export default function MyDocuments() {
             {/* Drawer Footer */}
             <div className="px-6 py-4 border-t border-[#e5e7eb] bg-[#f9fafb]">
               <button
-                onClick={handleUploadNewDocument}
+                onClick={() => setAddModal(true)}
                 className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] transition-colors font-medium"
               >
                 <Upload className="w-4 h-4" />

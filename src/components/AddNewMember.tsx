@@ -135,7 +135,7 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
         {/* Body */}
         <div className="px-8 py-6 space-y-8">
           {/* Auto Configuration */}
-          <Section title="Auto Configuration">
+          {/* <Section title="Auto Configuration">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <Label>Select State <span className="text-[#FB2C36]">*</span></Label>
@@ -186,29 +186,27 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
                 />
               </div>
             </div>
-
-            {/* Membership preview */}
-            <div className="bg-linear-to-br from-[#ecfdf5] to-[#ffffff] rounded-lg border-[0.74px] border-[#a4f4cf] p-4 mt-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-[#6a7282] mb-1">
-                    Membership Number Preview
-                  </p>
-                  <p className="text-xl font-bold text-[#1F7A4D] font-mono">
-                    {getMembershipNumber()}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#fef3c7] text-[#f59e0b]">
-                    Temporary
-                  </span>
-                  <p className="text-xs text-[#6a7282] mt-1">
-                    Permanent after payment
-                  </p>
-                </div>
+          </Section> */}
+          <div className="bg-linear-to-br from-[#ecfdf5] to-[#ffffff] rounded-lg border-[0.74px] border-[#a4f4cf] p-4 mt-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-[#6a7282] mb-1">
+                  Membership Number Preview
+                </p>
+                <p className="text-xl font-bold text-[#1F7A4D] font-mono">
+                  {getMembershipNumber()}
+                </p>
+              </div>
+              <div className="text-right">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#fef3c7] text-[#f59e0b]">
+                  Temporary
+                </span>
+                <p className="text-xs text-[#6a7282] mt-1">
+                  Permanent after payment
+                </p>
               </div>
             </div>
-          </Section>
+          </div>
 
           {/* Company Details */}
           <Section title="Company Details">
@@ -223,7 +221,7 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
                   placeholder="Enter company name"
                 />
               </div>
-                            <div className="md:col-span-2">
+              <div className="md:col-span-2">
                 <Label>Enter GROUP Company Name (if applicable)</Label>
                 <input
                   type="text"
@@ -274,6 +272,7 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
                 <input
                   type="text"
                   value={formData.repName}
+                  placeholder="Enter name"
                   onChange={(e) => setFormData({ ...formData, repName: e.target.value })}
                   className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                 />
@@ -283,6 +282,7 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
                 <input
                   type="text"
                   value={formData.repDesignation}
+                  placeholder="Enter designation"
                   onChange={(e) => setFormData({ ...formData, repDesignation: e.target.value })}
                   className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                 />
@@ -292,6 +292,7 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
                 <input
                   type="tel"
                   value={formData.repOfficePhone}
+                  placeholder="+91 XXXXX XXXXX"
                   onChange={(e) => setFormData({ ...formData, repOfficePhone: e.target.value })}
                   className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                 />
@@ -301,6 +302,7 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
                 <input
                   type="tel"
                   value={formData.repMobile}
+                  placeholder="+91 XXXXX XXXXX"
                   onChange={(e) => setFormData({ ...formData, repMobile: e.target.value })}
                   className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                 />
@@ -346,7 +348,7 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
 
           {/* Wind Electric Generator Details (only if generator selected) */}
           {formData.memberCategory === "generator" && (
-            <Section 
+            <Section
               title="Wind Electric Generator Details"
               action={
                 <button
@@ -470,6 +472,58 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
                   className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                   placeholder="Name and designation"
                 />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>Name <span className="text-[#FB2C36]">*</span></Label>
+                  <input
+                    type="text"
+                    value={formData.repName}
+                    placeholder="Enter name"
+                    onChange={(e) => setFormData({ ...formData, repName: e.target.value })}
+                    className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
+                  />
+                </div>
+                <div>
+                  <Label>Designation <span className="text-[#FB2C36]">*</span></Label>
+                  <input
+                    type="text"
+                    value={formData.repDesignation}
+                    placeholder="Enter designation"
+                    onChange={(e) => setFormData({ ...formData, repDesignation: e.target.value })}
+                    className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
+                  />
+                </div>
+                <div>
+                  <Label>Office Phone</Label>
+                  <input
+                    type="tel"
+                    value={formData.repOfficePhone}
+                    placeholder="+91 XXXXX XXXXX"
+                    onChange={(e) => setFormData({ ...formData, repOfficePhone: e.target.value })}
+                    className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
+                  />
+                </div>
+                <div>
+                  <Label>Mobile <span className="text-[#FB2C36]">*</span></Label>
+                  <input
+                    type="tel"
+                    value={formData.repMobile}
+                    placeholder="+91 XXXXX XXXXX"
+                    onChange={(e) => setFormData({ ...formData, repMobile: e.target.value })}
+                    className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <Label>Email <span className="text-[#FB2C36]">*</span></Label>
+                  <input
+                    type="email"
+                    value={formData.repEmail}
+                    onChange={(e) => setFormData({ ...formData, repEmail: e.target.value })}
+                    className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
+                    placeholder="email@example.com"
+                  />
+                </div>
               </div>
               <div>
                 <Label>Group Company Details (if total capacity &gt; 38 MW)</Label>

@@ -2,20 +2,14 @@
 
 import {
   FileText,
-  Scale,
   CalendarDays,
   Users,
   Bell,
-  Download,
-  ArrowUpRight,
-  Building2,
-  MessageCircleQuestion,
   BarChart3,
   TrendingUp,
-  Users2,
-  User2Icon,
   AlertCircle,
 } from "lucide-react";
+import AdminCalendar from "./ActionCalendar";
 
 export default function Dashboard() {
   return (
@@ -32,108 +26,16 @@ export default function Dashboard() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Stat title="Active Policies" value="24" growth="+3%" icon={<FileText />} color="green" bg="green" />
-        <Stat title="Ongoing Legal Matters" value="8" growth="+2%" icon={<AlertCircle />} color="amber" bg="amber" />
-        <Stat title="Upcoming Events" value="12" growth="+5%" icon={<CalendarDays />} color="blue" bg="blue" />
-        <Stat title="New Members" value="156" growth="+12%" icon={<Users />} color="purple" bg="purple" />
+        <Stat title="Total Members" value="156" growth="+12%" icon={<Users />} color="purple" bg="purple" />
+        <Stat title="Paid Members" value="156" growth="+12%" icon={<Users />} color="green" bg="green" />
+        <Stat title="Members with due" value="8" growth="+2%" icon={<AlertCircle />} color="amber" bg="amber" />
+        <Stat title="Total subscription collection" value="12" growth="+5%" icon={<CalendarDays />} color="blue" bg="blue" />
       </div>
 
-      {/* Notices + Events */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        {/* Latest Notices */}
-        <div className="lg:col-span-2 bg-card rounded-xl border-[0.76px] border-border p-4 sm:p-5">
-          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4">
-            <h3 className="font-semibold text-[17px] text-[#101828] flex items-center gap-2">
-              <div className="p-2 bg-[#E7F7EE] dark:bg-[#1F7A4D]/20 rounded-lg">
-                <Bell className="w-4.5 h-4.5 text-[#1F7A4D]" />
-              </div>
-              Latest Notice Uploads
-            </h3>
-            <span className="text-xs sm:text-[13.27px] text-[#242424] font-medium flex items-center gap-1 cursor-pointer">
-              View All <ArrowUpRight className="w-4 h-4" />
-            </span>
-          </div>
-
-
-          <Notice
-            title="New Wind Energy Policy Guidelines Released"
-            tag="Policy"
-            badge="NEW"
-            council="National Council"
-            date="5 Jan 2026"
-          />
-
-          <Notice
-            title="Quarterly Meeting Schedule Announced"
-            tag="Announcement"
-            badge="NEW"
-            council="National Council"
-            date="4 Jan 2026"
-          />
-
-          <Notice
-            title="Maharashtra State Wind Energy Guidelines"
-            tag="Regulation"
-            // badge="NEW"
-            council="State Council"
-            date="3 Jan 2026"
-          />
-
-          <Notice
-            title="Policy Guidelines Released"
-            tag="Policy"
-            badge="NEW"
-            council="National Council"
-            date="3 Jan 2026"
-          />
-
-          <Notice
-            title="Meeting Quarterly Schedule Announced"
-            tag="Announcement"
-            badge="NEW"
-            council="National Council"
-            date="1 Jan 2026"
-          />
-
-        </div>
-
-        {/* Upcoming Events */}
-        <div className="bg-card rounded-xl border border-border px-4  h-fit">
-          <h3 className="font-semibold text-base pt-4 sm:text-[17px] mb-4 flex items-center gap-2 text-[#101828]">
-            <div className="p-2 bg-[#DBEAFE] rounded-lg">
-              <CalendarDays className="w-4.5 h-4.5 text-[#1447E6]" />
-            </div>
-            Upcoming Events
-          </h3>
-
-          <Event
-            title="Wind Energy Technology Summit 2026"
-            date="15 February 2026"
-            place="New Delhi"
-            stats="Internal"
-            bg="bg-[#E7F7EE]"
-            textColor="text-[#1F7A4D]"
-          />
-          <Event
-            title="National Council Meeting"
-            date="20 January 2026"
-            place="Virtual"
-            stats="Internal"
-            bg="bg-[#E7F7EE]"
-            textColor="text-[#1F7A4D]"
-          />
-          <Event
-            title="Renewable Energy Expo"
-            date="10 March 2026"
-            place="Mumbai"
-            stats="Partnered"
-            bg="bg-[#DBEAFE]"
-            textColor="text-[#1447E6]"
-          />
-
-          <button className="text-[#1F7A4D] text-[13.27px] font-medium border-t-[0.76px] border-[#E5E7EB] flex justify-center items-center py-3 mt-4 w-full cursor-pointer">
-            View All Events
-          </button>
+      {/* Admin Calendar */}
+      <div className="grid grid-cols-1 gap-10">
+        <div className="bg-[#ffffff] rounded-xl border-[1.35px] border-[#CCCCCC] p-6 overflow-x-auto">
+          <AdminCalendar />
         </div>
       </div>
 
@@ -195,55 +97,6 @@ function Stat({ title, value, growth, icon, color, bg }: any) {
         <p className="text-[13.27px] text-[#4A5565]">{title}</p>
       </div>
 
-    </div>
-  );
-}
-
-function Notice({ title, tag, badge, council, date }: any) {
-  return (
-    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 py-4 border-t border-[#E5E7EB]">
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1 flex-wrap">
-          <h3 className="font-medium text-[17.06px] text-[#101828]">
-            {title}
-          </h3>
-          {badge && (
-            <span className="px-2 py-0.5 bg-[#E7F7EE] text-[#1F7A4D] rounded text-xs">
-              {badge}
-            </span>
-          )}
-        </div>
-
-        <div className="flex gap-2 mt-1 text-xs sm:text-[13.27px] flex-wrap">
-          <span className="px-2 py-0.5 bg-[#F3F4F6] text-[11.38px] text-[#4A5565] rounded">
-            {tag}
-          </span>
-          <span className="text-[#4A5565] text-[13.27px]">
-            {council} · {date}
-          </span>
-        </div>
-      </div>
-
-      <button className="text-[13.27px] font-medium text-[#242424] cursor-pointer self-start sm:self-auto">
-        Download
-      </button>
-    </div>
-  )
-}
-
-function Event({ title, date, place, stats, bg, textColor }: any) {
-  return (
-    <div className="mb-4 border-t-[0.76px] border-[#E5E7EB] pt-3 ">
-      <p className="text-[15px] font-medium text-[#101828]">{title}</p>
-      <p className="text-[13.27px] text-[#4A5565]">
-        {date}
-      </p>
-      <p className="text-[13.27px] text-[#4A5565]">
-        {place}
-      </p>
-      <p className={`text-xs ${textColor} ${bg} w-fit px-2 py-1 rounded mt-1`}>
-        {stats}
-      </p>
     </div>
   );
 }

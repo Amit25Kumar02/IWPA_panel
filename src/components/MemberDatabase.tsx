@@ -6,7 +6,6 @@ import {
   Filter,
   Download,
   Eye,
-  Edit,
   Mail,
   Phone,
   MapPin,
@@ -18,8 +17,6 @@ import AddNewMember from "./AddNewMember";
 
 export default function MemberDatabase() {
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
@@ -118,7 +115,7 @@ export default function MemberDatabase() {
 
   return (
     <>
-      <div className="space-y-6">
+      <div className="space-y-6 p-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -300,16 +297,7 @@ export default function MemberDatabase() {
                             <button className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] transition-colors cursor-pointer">
                               <Eye className="w-4 h-4" />
                             </button>
-                            <button 
-                              onClick={() => {
-                                setSelectedMember(member);
-                                setShowEditModal(true);
-                              }}
-                              className="p-2 hover:bg-[#ecfdf5] rounded-lg text-[#1F7A4D] transition-colors cursor-pointer"
-                            >
-                              <Edit className="w-4 h-4" />
-                            </button>
-                               <button
+                            <button
                                 // onClick={() => handleDelete(latestDoc.id, latestDoc.documentNumber)}
                                 className="p-2 hover:bg-red-50 rounded-lg text-[#FB2C36] transition-colors cursor-pointer"
                               >
@@ -335,16 +323,7 @@ export default function MemberDatabase() {
       {/* Add Member Modal */}
       {showAddModal && <AddNewMember onClose={() => setShowAddModal(false)} />}
       
-      {/* Edit Member Modal */}
-      {showEditModal && selectedMember && (
-        <AddNewMember 
-          onClose={() => {
-            setShowEditModal(false);
-            setSelectedMember(null);
-          }} 
-          initialData={selectedMember}
-        />
-      )}
+
     </>
   );
 }

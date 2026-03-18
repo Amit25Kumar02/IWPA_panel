@@ -31,7 +31,7 @@ const sectionTitles: Record<string, string> = {
   email: "Email",
   messages: "Messages",
   helpDesk: "Help Desk",
-  helpDeskMember: "Help Desk",
+  helpDeskmember: "Help Desk",
   events: "Events",
   eventsmember: "Events",
 };

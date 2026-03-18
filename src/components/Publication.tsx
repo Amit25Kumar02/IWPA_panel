@@ -18,7 +18,7 @@ export default function Publications() {
     ];
 
     return (
-        <div className="space-y-6 p-4 sm:p-6">
+        <div className="space-y-6 p-6">
             {/* Header */}
             <div>
                 <h1 className="text-xl sm:text-2xl font-bold text-[#242424]">Publications</h1>
@@ -88,7 +88,7 @@ export default function Publications() {
             </div>
 
             {/* Official Documents */}
-            <div className='grid grid-cols-1 gap-6'>
+            {/* <div className='grid grid-cols-1 gap-6'>
                 <div className="bg-white border border-[#e5e7eb] rounded-lg p-4 sm:p-6 overflow-auto">
                     <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
                         <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#f3e8ff] rounded-lg flex items-center justify-center">
@@ -134,7 +134,7 @@ export default function Publications() {
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 }

@@ -58,7 +58,7 @@ export default function HelpDesk() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -70,13 +70,13 @@ export default function HelpDesk() {
           </p>
         </div>
 
-        <button
+        {/* <button
           onClick={() => setShowNewTicket(true)}
           className="flex items-center gap-2 px-4 py-2 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           New Ticket
-        </button>
+        </button> */}
       </div>
 
       {/* New Ticket */}
@@ -183,6 +183,7 @@ export default function HelpDesk() {
         <InfoCard
           icon={<MessageSquare className="w-6 h-6 text-[#1F7A4D]" />}
           bg="bg-[#d0fae5]"
+          text="text-[#1F7A4D]"
           title="Average Response Time"
           value="2–4 hours"
           desc="During business hours"
@@ -190,6 +191,7 @@ export default function HelpDesk() {
         <InfoCard
           icon={<CheckCircle className="w-6 h-6 text-[#155DFC]" />}
           bg="bg-[#dbeafe]"
+          text="text-[#155DFC]"
           title="Resolution Rate"
           value="94%"
           desc="Tickets resolved within 48 hours"
@@ -197,6 +199,7 @@ export default function HelpDesk() {
         <InfoCard
           icon={<AlertCircle className="w-6 h-6 text-[#f59e0b]" />}
           bg="bg-[#fef3c7]"
+          text="text-[#242424]"
           title="Support Hours"
           value="Mon–Fri, 9 AM – 6 PM"
           desc="IST (Indian Standard Time)"
@@ -213,6 +216,7 @@ function InfoCard({
   title,
   value,
   desc,
+  text,
 }: {
   icon: React.ReactNode;
   bg: string;
@@ -228,7 +232,7 @@ function InfoCard({
         {icon}
       </div>
       <h3 className="font-semibold text-[#242424] mb-1">{title}</h3>
-      <p className="text-xl font-bold text-[#242424]">{value}</p>
+      <p className={`text-xl font-bold ${text}`}>{value}</p>
       <p className="text-sm text-[#6a7282]">{desc}</p>
     </div>
   );

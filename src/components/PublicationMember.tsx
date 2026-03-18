@@ -18,7 +18,7 @@ export default function PublicationsMember() {
     ];
 
     return (
-        <div className="space-y-6 p-4 sm:p-6">
+        <div className="space-y-6 p-6">
             {/* Header */}
             <div>
                 <h1 className="text-xl sm:text-2xl font-bold text-[#242424]">Publications</h1>

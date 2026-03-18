@@ -61,7 +61,7 @@ export default function TeamChat() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Header */}
       <div className="p-4 sm:p-0">
         <h1 className="text-xl sm:text-2xl font-bold text-[#242424]">Team Chat</h1>

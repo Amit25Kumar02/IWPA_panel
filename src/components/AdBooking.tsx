@@ -13,10 +13,10 @@ export default function AdBooking() {
     const [open, setOpen] = useState(false);
 
     const stats = [
-        { label: 'Active Campaigns', value: '12', icon: Megaphone, color: '#1F7A4D', bg: '#d0fae5' },
-        { label: 'Total Revenue', value: '₹8.5L', icon: DollarSign, color: '#155DFC', bg: '#dbeafe' },
-        { label: 'Total Impressions', value: '456K', icon: TrendingUp, color: '#a855f7', bg: '#f3e8ff' },
-        { label: 'Total Clicks', value: '23.4K', icon: MousePointerClick, color: '#f59e0b', bg: '#fef3c7' },
+        { label: 'Total Magazine Ads', value: '12', icon: Megaphone, color: '#1F7A4D', bg: '#d0fae5' },
+        { label: 'Total Website Ads', value: '₹8.5L', icon: DollarSign, color: '#155DFC', bg: '#dbeafe' },
+        { label: 'Total Website Ads', value: '456K', icon: TrendingUp, color: '#a855f7', bg: '#f3e8ff' },
+        { label: 'Total Revenue', value: '23.4K', icon: MousePointerClick, color: '#f59e0b', bg: '#fef3c7' },
     ];
 
     const ads = [
@@ -61,7 +61,7 @@ export default function AdBooking() {
             : 'bg-[#fee2e2] text-[#dc2626]';
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 p-6">
             {/* Header */}
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
                 <div>

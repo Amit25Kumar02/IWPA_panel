@@ -10,6 +10,7 @@ import {
   Calendar,
   CreditCard,
   AlertTriangle,
+  RefreshCcw,
 } from "lucide-react";
 
 export default function Subscriptions() {
@@ -124,7 +125,7 @@ export default function Subscriptions() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-[#242424]">Subscriptions</h1>
@@ -266,22 +267,22 @@ export default function Subscriptions() {
       </div>
 
       {/* Renewal Reminder */}
-      <div className="bg-linear-to-br from-[#FEF3C7] to-[#FFFFFF] border-[0.76px] border-[#FCD34D] rounded-lg p-6 flex gap-4">
+      <div className="bg-linear-to-b from-[#FEF3C7] to-[#FFFFFF] border-[0.76px] border-[#FCD34D] rounded-lg p-6 flex gap-4">
         <div className="w-12 h-12 bg-[#F59E0B] rounded-lg flex items-center justify-center">
           <Calendar className="w-6 h-6 text-[#ffffff]" />
         </div>
         <div>
-          <h3 className="font-semibold text-[17px] text-[#242424]">Renewal Reminders</h3>
+          <h3 className="font-semibold text-[17px] text-[#242424]">Send reminders</h3>
           <p className="text-sm text-[#6A7282] mt-1">
             {
               filteredSubscriptions.filter(
                 (s) => s.renewalDue > 0 && s.renewalDue <= 90
               ).length
             }{" "}
-            subscriptions are expiring in the next 90 days.
+            subscriptions are expiring in the next 90 days. Send automated renewal reminders to members.
           </p>
-          <button className="mt-3 px-4 py-2 bg-[#F59E0B] text-[#ffffff] text-sm rounded-lg cursor-pointer">
-            Send Renewal Reminders
+          <button className="mt-3 px-4 py-2 bg-[#F59E0B] text-[#ffffff] text-sm rounded-lg cursor-pointer flex items-center gap-2 justify-center">
+           <RefreshCcw className="w-4 h-4"/> Send Renewal Reminders
           </button>
         </div>
       </div>

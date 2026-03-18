@@ -54,7 +54,7 @@ export default function Messages() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-[#242424]">Messages</h1>
