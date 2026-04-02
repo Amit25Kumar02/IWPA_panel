@@ -9,7 +9,9 @@ import {
   Edit,
   Filter,
   Layers,
-  FileCheck
+  FileCheck,
+  Trash,
+  Trash2
 } from "lucide-react";
 
 export default function MyDocumentsMember() {
@@ -212,8 +214,8 @@ export default function MyDocumentsMember() {
                         <Download size={16} />
                       </button>
 
-                      <button className="p-2 rounded-md hover:bg-[#ECFDF5] text-[#1F7A4D]">
-                        <Edit size={16} />
+                      <button className="p-2 rounded-md hover:bg-[#ECFDF5] text-[#FB2C36]">
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </td>

@@ -32,15 +32,15 @@ export default function SubscriptionMemberPage() {
   const cards = [
     {
       title: "Current Plan",
-      value: "Corporate Annual",
+      value: "Annual - Pro rata based",
       text: "text-[#242424]",
       icon: CreditCard,
       bg: "#D0FAE5",
       color: "#1F7A4D",
     },
     {
-      title: "Expiry Date",
-      value: "14 Mar 2027",
+      title: "Subscriptions expires on",
+      value: "31 Mar 2027",
       text: "text-[#242424]",
       icon: Calendar,
       bg: "#DBEAFE",
@@ -134,7 +134,7 @@ export default function SubscriptionMemberPage() {
           <div>
             <p className="text-[#6A7282] text-[13.27px]">Validity Period</p>
             <p className="text-[#242424] font-semibold text-[15.17px] mt-1">
-              3/15/2026 - 3/14/2027
+              14/03/2026 - 31/03/2027
             </p>
           </div>
 
@@ -206,6 +206,11 @@ export default function SubscriptionMemberPage() {
                   </td>
 
                   <td className="px-6 py-4 flex justify-end gap-2">
+
+                    <button className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md bg-[#D0FAE5] text-[#1F7A4D]">
+                      <Download size={14} />
+                      Certificate
+                    </button>
 
                     <button className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-md bg-[#D0FAE5] text-[#1F7A4D]">
                       <Download size={14} />

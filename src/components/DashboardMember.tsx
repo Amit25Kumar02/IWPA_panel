@@ -31,42 +31,42 @@ export default function DashboardMember() {
 
       {/* Analytics */}
       <h2 className="text-[18.96px] font-semibold text-[#242424]">
-        Analytics Overview
+        Subscription Payment History
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
         <Stat
-          title="Active Policies"
-          value="24"
-          growth="+3 this month"
+          title="My Subscriptions"
+          value="₹12,000"
+          growth="Year"
           icon={<FileText />}
           color="#1F7A4D"
           bg="#D0FAE5"
         />
 
         <Stat
-          title="Ongoing Legal Matters"
-          value="8"
-          growth="+2 this month"
+          title="Payment Due"
+          value="₹10,000"
+          growth="This month"
           icon={<AlertCircle />}
           color="#F59E0B"
           bg="#FEF3C7"
         />
 
         <Stat
-          title="Upcoming Events"
-          value="12"
-          growth="+5 this month"
+          title="Last Paid"
+          value="01 April 2025"
+          growth="Paid"
           icon={<CalendarDays />}
           color="#2563EB"
           bg="#DBEAFE"
         />
 
         <Stat
-          title="New Members"
-          value="156"
-          growth="+12 this month"
+          title="Date of Expiry"
+          value="31 March 2027"
+          growth="4 months left"
           icon={<Users />}
           color="#9333EA"
           bg="#F3E8FF"
@@ -90,7 +90,7 @@ export default function DashboardMember() {
             </h3>
 
             <span className="text-[13.27px] font-medium text-[#242424] flex items-center gap-1 cursor-pointer">
-              View All <ArrowUpRight size={16}/>
+              View All <ArrowUpRight size={16} />
             </span>
 
           </div>
@@ -165,18 +165,18 @@ export default function DashboardMember() {
         </p>
 
         <button className="mt-4 bg-[#1F7A4D] text-[#ffffff] px-5 py-2 rounded-lg text-[15.17px] flex items-center gap-1 mx-auto">
-          Explore Company Profiles <ArrowUpRight size={16}/>
+          Explore Company Profiles <ArrowUpRight size={16} />
         </button>
 
       </div>
 
       {/* Quick Access */}
 
-      <h2 className="text-[18.96px] font-semibold text-[#242424]">
+      {/* <h2 className="text-[18.96px] font-semibold text-[#242424]">
         Quick Access
-      </h2>
+      </h2> */}
 
-      <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
+      {/* <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
 
         <Action icon={<Bell />} label="Notice Board" bg="#D1FAE5" color="#1F7A4D" />
 
@@ -188,7 +188,7 @@ export default function DashboardMember() {
 
         <Action icon={<BarChart3 />} label="Reports" bg="#DBEAFE" color="#2563EB" />
 
-      </div>
+      </div> */}
 
     </div>
   );
@@ -202,14 +202,14 @@ function Stat({ title, value, growth, icon, color, bg }: any) {
       <div>
         <p className="text-[13.27px] text-[#6A7282]">{title}</p>
         <h3 className="text-[28.44px] font-bold mt-1">{value}</h3>
-        <p className="text-[13.27px] mt-2 flex items-center gap-1" style={{color}}>
-          <ArrowUpRight size={14}/> {growth}
+        <p className="text-[13.27px] mt-2 flex items-center gap-1" style={{ color }}>
+          <ArrowUpRight size={14} /> {growth}
         </p>
       </div>
 
       <div
         className="w-10 h-10 rounded-lg flex items-center justify-center"
-        style={{background:bg,color:color}}
+        style={{ background: bg, color: color }}
       >
         {icon}
       </div>
@@ -217,8 +217,8 @@ function Stat({ title, value, growth, icon, color, bg }: any) {
   );
 }
 
-function Notice({ title, tag, badge }:any){
-  return(
+function Notice({ title, tag, badge }: any) {
+  return (
     <div className="flex justify-between items-center py-4 border-t border-[#E5E7EB]">
 
       <div>
@@ -226,7 +226,7 @@ function Notice({ title, tag, badge }:any){
           <h3 className="font-medium text-[#101828]">
             {title}
           </h3>
-           {badge && (
+          {badge && (
             <span className="px-2 py-0.5 bg-[#D1FAE5] text-[#1F7A4D] rounded">
               {badge}
             </span>
@@ -256,14 +256,14 @@ function Notice({ title, tag, badge }:any){
   )
 }
 
-function Event({title,date,place,status,color}:any){
+function Event({ title, date, place, status, color }: any) {
 
-  const styles:any={
-    green:"bg-[#E7F7EE] text-[#1F7A4D]",
-    blue:"bg-[#DBEAFE] text-[#1447E6]"
+  const styles: any = {
+    green: "bg-[#E7F7EE] text-[#1F7A4D]",
+    blue: "bg-[#DBEAFE] text-[#1447E6]"
   }
 
-  return(
+  return (
     <div className="border-t border-[#E5E7EB] px-[22.75px] py-2.5 mb-3">
 
       <p className="text-[15px] text-[#101828] font-medium">{title}</p>
@@ -280,19 +280,19 @@ function Event({title,date,place,status,color}:any){
   )
 }
 
-function Action({icon,label,bg,color}:any){
-  return(
-    <div className="bg-[#ffffff] border-[0.76px] border-[#E5E7EB] rounded-xl p-4 flex flex-col items-center gap-2 hover:shadow-sm cursor-pointer">
+// function Action({icon,label,bg,color}:any){
+//   return(
+//     <div className="bg-[#ffffff] border-[0.76px] border-[#E5E7EB] rounded-xl p-4 flex flex-col items-center gap-2 hover:shadow-sm cursor-pointer">
 
-      <div
-        className="p-2 rounded-lg"
-        style={{background:bg,color}}
-      >
-        {icon}
-      </div>
+//       <div
+//         className="p-2 rounded-lg"
+//         style={{background:bg,color}}
+//       >
+//         {icon}
+//       </div>
 
-      <p className="text-[13.27px] text-[#101828] font-medium text-center">{label}</p>
+//       <p className="text-[13.27px] text-[#101828] font-medium text-center">{label}</p>
 
-    </div>
-  )
-}
+//     </div>
+//   )
+// }
