@@ -321,30 +321,34 @@ export default function TeamChat() {
             };
           }),
         ...members
-          .filter((member: any) => member.repEmail || member.addRepEmail)
+          .filter((member: any) => member.repEmail || member.addRepEmail || member.contact?.email1 || member.contact?.email2)
           .flatMap((member: any) => {
             const memberRole = normalizeRoleKey(member.memberCategory || member.category || member.type);
-            const primary: DirectoryPerson[] = member.repEmail
+            const email1 = member.repEmail || member.contact?.email1;
+            const name1 = member.repName || member.contact?.person1 || member.companyName || email1;
+            const email2 = member.addRepEmail || member.contact?.email2;
+            const name2 = member.addRepName || member.contact?.person2 || member.companyName || email2;
+            const primary: DirectoryPerson[] = email1
               ? [{
-                  id: member._id || member.membershipId || member.repEmail,
-                  name: member.repName || member.companyName || member.repEmail,
-                  email: member.repEmail,
+                  id: member._id || member.membershipId || email1,
+                  name: name1,
+                  email: email1,
                   role: memberRole === "vendors" ? "Vendor" : "General Member",
                   roleKey: memberRole,
                   state: member.state,
-                  company: member.companyName,
+                  company: member.companyName || member.name,
                   source: "member" as const,
                 }]
               : [];
-            const additional: DirectoryPerson[] = member.addRepEmail
+            const additional: DirectoryPerson[] = email2
               ? [{
-                  id: `${member._id || member.membershipId || member.addRepEmail}:additional`,
-                  name: member.addRepName || member.companyName || member.addRepEmail,
-                  email: member.addRepEmail,
+                  id: `${member._id || member.membershipId || email2}:additional`,
+                  name: name2,
+                  email: email2,
                   role: "Additional Representative",
                   roleKey: memberRole,
                   state: member.state,
-                  company: member.companyName,
+                  company: member.companyName || member.name,
                   source: "member" as const,
                 }]
               : [];
