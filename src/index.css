@@ -2497,9 +2497,9 @@ html {
 }
 
 :root {
-  --lightningcss-light: ;
-  --lightningcss-dark: initial;
-  color-scheme: dark;
+  --lightningcss-light: initial;
+  --lightningcss-dark: ;
+  color-scheme: light;
 }
 
 @property --tw-translate-x {

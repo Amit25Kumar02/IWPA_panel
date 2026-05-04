@@ -55,7 +55,7 @@ export function Sidebar({
   const adminNavItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "rolespage", label: "Roles & Permissions", icon: Shield },
-    { id: "sports", label: "Member Database", icon: Users },
+    { id: "memberDatabase", label: "Member Database", icon: Users },
     { id: "subscriptions", label: "Subscriptions", icon: CreditCard },
     { id: "noticeBoard", label: "Notice Board", icon: Bell },
     { id: "myDocuments", label: "Documents", icon: FolderOpen },
@@ -77,8 +77,10 @@ export function Sidebar({
     { id: "eventsmember", label: "Events", icon: Calendar },
     { id: "subscriptionsmember", label: "Subscriptions", icon: CreditCard },
     { id: "publicationsmember", label: "Publications", icon: BookOpen },
-    { id: "myDocumentsmember", label: "My Documents", icon: FolderOpen },
-        { id: "helpDeskmember", label: "Help Desk", icon: HelpCircle },
+    { id: "myDocumentsmember", label: "Documents", icon: FolderOpen },
+    { id: "adBookingmember", label: "Ad Booking", icon: Megaphone },
+    { id: "companyProfiles", label: "Company Profiles", icon: Users },
+    { id: "helpDeskmember", label: "Help Desk", icon: HelpCircle },
   ];
 
   const navItems = userType === 'admin' ? adminNavItems : memberNavItems;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Shield,
   Building2,
@@ -18,8 +18,14 @@ import {
   Eye,
   Bell,
   MessageSquare,
-  CheckSquare
+  CheckSquare,
+  Trash2,
+  Loader2,
+  Calculator,
+  FolderOpen,
 } from 'lucide-react';
+import { toast } from 'sonner';
+import api from '../utils/api';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -67,15 +73,6 @@ const theme = {
 
 type RoleCategory = 'headquarters' | 'national_council' | 'state_council' | 'general' | 'vendors';
 
-interface RoleTemplate {
-  id: string;
-  title: string;
-  category: RoleCategory;
-  state?: string;
-  description: string;
-  activeInstances: number;
-}
-
 interface RoleInstance {
   id: string;
   templateId: string;
@@ -97,14 +94,47 @@ interface RoleInstance {
   website?: string;
   isDraft: boolean;
   permissions: {
+    iwpaDirectory: string;
     noticeBoard: string;
     reports: string;
     approvals: string;
     chat: string;
     email: string;
     messaging: string;
+    accounting: string;
   };
 }
+
+interface ApiRole {
+  _id: string;
+  title: string;
+  category: RoleCategory;
+  state?: string;
+  council?: string;
+  designation: string;
+  companyName?: string;
+  companyDescription?: string;
+  photo?: string;
+  logo?: string;
+  mobile: string;
+  landline?: string;
+  email: string;
+  address: string;
+  website?: string;
+  isDraft: boolean;
+  permissions: {
+    iwpaDirectory: string;
+    noticeBoard: string;
+    reports: string;
+    approvals: string;
+    chat: string;
+    email: string;
+    messaging: string;
+    accounting: string;
+  };
+}
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
 
 const indianStates = [
   'Andhra Pradesh', 'Gujarat', 'Karnataka', 'Madhya Pradesh', 'Maharashtra',
@@ -115,51 +145,31 @@ const councils = [
   'Executive Council', 'Technical Council', 'Policy Council', 'Finance Council'
 ];
 
-// Mock role templates
-const mockRoleTemplates: RoleTemplate[] = [
-  // Headquarters
-  { id: 'hq-1', title: 'Director General', category: 'headquarters', description: 'Chief executive officer', activeInstances: 1 },
-  { id: 'hq-2', title: 'Deputy Director General', category: 'headquarters', description: 'Deputy chief executive', activeInstances: 1 },
-  { id: 'hq-3', title: 'Head - Policy & Advocacy', category: 'headquarters', description: 'Policy leadership', activeInstances: 1 },
-  { id: 'hq-4', title: 'Head - Technical Affairs', category: 'headquarters', description: 'Technical leadership', activeInstances: 1 },
-  { id: 'hq-5', title: 'Head - Member Services', category: 'headquarters', description: 'Member relations', activeInstances: 1 },
-
-  // National Council
-  { id: 'nc-1', title: 'President', category: 'national_council', description: 'Association president', activeInstances: 1 },
-  { id: 'nc-2', title: 'Vice President', category: 'national_council', description: 'Association vice president', activeInstances: 2 },
-  { id: 'nc-3', title: 'Secretary General', category: 'national_council', description: 'General secretary', activeInstances: 1 },
-  { id: 'nc-4', title: 'Treasurer', category: 'national_council', description: 'Financial officer', activeInstances: 1 },
-  { id: 'nc-5', title: 'Council Member', category: 'national_council', description: 'Executive council member', activeInstances: 8 },
-
-  // State Council
-  { id: 'sc-1', title: 'State President', category: 'state_council', state: 'Maharashtra', description: 'State president', activeInstances: 1 },
-  { id: 'sc-2', title: 'State Secretary', category: 'state_council', state: 'Maharashtra', description: 'State secretary', activeInstances: 1 },
-  { id: 'sc-3', title: 'State President', category: 'state_council', state: 'Gujarat', description: 'State president', activeInstances: 1 },
-  { id: 'sc-4', title: 'State Secretary', category: 'state_council', state: 'Gujarat', description: 'State secretary', activeInstances: 1 },
-  { id: 'sc-5', title: 'State President', category: 'state_council', state: 'Tamil Nadu', description: 'State president', activeInstances: 1 },
-
-  // General (3 roles)
-  { id: 'gen-1', title: 'Member Company', category: 'general', description: 'General member', activeInstances: 142 },
-  { id: 'gen-2', title: 'Associate Member', category: 'general', description: 'Associate member', activeInstances: 28 },
-  { id: 'gen-3', title: 'Honorary Member', category: 'general', description: 'Honorary member', activeInstances: 12 },
-
-  // Vendors (6 roles)
-  { id: 'ven-1', title: 'Vendor Partner', category: 'vendors', description: 'Vendor/supplier', activeInstances: 34 },
-  { id: 'ven-2', title: 'Service Provider', category: 'vendors', description: 'Service vendor', activeInstances: 18 },
-  { id: 'ven-3', title: 'Technology Partner', category: 'vendors', description: 'Tech vendor', activeInstances: 15 },
-  { id: 'ven-4', title: 'Consultant', category: 'vendors', description: 'Consulting vendor', activeInstances: 22 },
-  { id: 'ven-5', title: 'Supplier', category: 'vendors', description: 'Material supplier', activeInstances: 41 },
-  { id: 'ven-6', title: 'Contractor', category: 'vendors', description: 'Contract vendor', activeInstances: 27 },
-];
-
 export default function RolesPermissions() {
   const [selectedCategory, setSelectedCategory] = useState<RoleCategory>('headquarters');
   const [selectedState, setSelectedState] = useState<string>('Maharashtra');
   const [selectedCouncil, setSelectedCouncil] = useState<string>('Executive Council');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedRole, setSelectedRole] = useState<RoleTemplate | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [mobileView, setMobileView] = useState<'categories' | 'roles' | 'form'>('categories');
+  const [apiRoles, setApiRoles] = useState<ApiRole[]>([]);
+  const [loadingRoles, setLoadingRoles] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; id: string | null; title: string }>
+    ({ show: false, id: null, title: '' });
+  const [deleting, setDeleting] = useState(false);
+
+  // Returns smart permission defaults based on category
+  const defaultPermissions = (category: RoleCategory) => ({
+    iwpaDirectory: 'View All',
+    noticeBoard: 'View All',
+    reports: (category === 'headquarters' || category === 'national_council' || category === 'state_council') ? 'Edit' : 'View All',
+    approvals: 'View All',
+    chat: 'Edit',
+    email: 'Edit',
+    messaging: 'Edit',
+    accounting: category === 'state_council' ? 'Edit' : 'None',
+  });
 
   // Form state
   const [formData, setFormData] = useState<Partial<RoleInstance>>({
@@ -173,54 +183,74 @@ export default function RolesPermissions() {
     address: '',
     website: '',
     isDraft: false,
-    permissions: {
-      noticeBoard: 'View All',
-      reports: 'View All',
-      approvals: 'View All',
-      chat: 'View All',
-      email: 'View All',
-      messaging: 'View All',
-    },
+    permissions: defaultPermissions('headquarters'),
   });
 
-  // Filter roles based on category and state
-  const filteredRoles = mockRoleTemplates.filter(role => {
-    const matchesCategory = role.category === selectedCategory;
-    const matchesState = selectedCategory === 'state_council' ? role.state === selectedState : true;
-    const matchesSearch = role.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      role.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesState && matchesSearch;
-  });
+  // GET roles
+  useEffect(() => { fetchRoles(); }, []);
 
-  const handleRoleSelect = (role: RoleTemplate) => {
-    setSelectedRole(role);
+  const fetchRoles = async () => {
+    setLoadingRoles(true);
+    try {
+      const { data } = await api.get('/api/v1/roles/get-roles');
+      const list = Array.isArray(data) ? data : (data?.data ?? []);
+      setApiRoles(list);
+    } catch {
+      toast.error('Failed to load roles');
+    } finally {
+      setLoadingRoles(false);
+    }
+  };
+
+  // DELETE role
+  const confirmDelete = async () => {
+    if (!deleteConfirm.id) return;
+    setDeleting(true);
+    try {
+      await api.delete(`/api/v1/roles/delete-role/${deleteConfirm.id}`);
+      setApiRoles(prev => prev.filter(r => r._id !== deleteConfirm.id));
+      toast.success('Role deleted successfully');
+      setDeleteConfirm({ show: false, id: null, title: '' });
+    } catch {
+      toast.error('Failed to delete role');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  // Filter db roles based on category, state and search
+  const filteredDbRoles = apiRoles.filter(r =>
+    r.category === selectedCategory &&
+    (selectedCategory !== 'state_council' || r.state === selectedState) &&
+    (r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.designation.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  const handleApiRoleSelect = (role: ApiRole) => {
     setShowForm(true);
+    setMobileView('form');
     setFormData({
+      id: role._id,
       title: role.title,
       category: role.category,
       state: role.state,
-      designation: '',
-      companyName: '',
-      mobile: '',
-      landline: '',
-      email: '',
-      address: '',
-      website: '',
-      isDraft: false,
-      permissions: {
-        noticeBoard: 'View All',
-        reports: 'View All',
-        approvals: 'View All',
-        chat: 'View All',
-        email: 'View All',
-        messaging: 'View All',
-      },
+      council: role.council,
+      designation: role.designation,
+      companyName: role.companyName || '',
+      companyDescription: role.companyDescription || '',
+      photoPreview: role.photo ? `${BASE_URL}${role.photo}` : undefined,
+      logoPreview: role.logo ? `${BASE_URL}${role.logo}` : undefined,
+      mobile: role.mobile,
+      landline: role.landline || '',
+      email: role.email,
+      address: role.address,
+      website: role.website || '',
+      isDraft: role.isDraft,
+      permissions: role.permissions,
     });
-    setMobileView('form');
   };
 
   const handleCreateNew = () => {
-    setSelectedRole(null);
     setShowForm(true);
     setFormData({
       title: '',
@@ -235,14 +265,7 @@ export default function RolesPermissions() {
       address: '',
       website: '',
       isDraft: false,
-      permissions: {
-        noticeBoard: 'View All',
-        reports: 'View All',
-        approvals: 'View All',
-        chat: 'View All',
-        email: 'View All',
-        messaging: 'View All',
-      },
+      permissions: defaultPermissions(selectedCategory),
     });
     setMobileView('form');
   };
@@ -269,13 +292,39 @@ export default function RolesPermissions() {
     }
   };
 
-  const handleSubmit = (isDraft: boolean) => {
-    // Handle form submission
-    console.log('Submitting role instance:', { ...formData, isDraft });
-    alert(`Role instance ${isDraft ? 'saved as draft' : 'submitted'} successfully!`);
-    setShowForm(false);
-    setSelectedRole(null);
-    setMobileView('categories');
+  const handleSubmit = async (isDraft: boolean) => {
+    if (!formData.title?.trim() || !formData.designation?.trim() || !formData.mobile?.trim() || !formData.email?.trim() || !formData.address?.trim()) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+    setSaving(true);
+    try {
+      const fd = new FormData();
+      const { photo, companyLogo, photoPreview, logoPreview, id, ...rest } = formData as RoleInstance & { id?: string };
+      Object.entries({ ...rest, isDraft }).forEach(([k, v]) => {
+        if (k === 'permissions') fd.append(k, JSON.stringify(v));
+        else if (v !== undefined && v !== null) fd.append(k, String(v));
+      });
+      if (photo instanceof File) fd.append('photo', photo);
+      if (companyLogo instanceof File) fd.append('logo', companyLogo);
+
+      const isEdit = !!(formData as any).id;
+      const { data } = isEdit
+        ? await api.patch(`/api/v1/roles/update-role/${(formData as any).id}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+        : await api.post('/api/v1/roles/create-role', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+
+      const saved = data?.data ?? data;
+      setApiRoles(prev =>
+        isEdit ? prev.map(r => r._id === saved._id ? saved : r) : [saved, ...prev]
+      );
+      toast.success(`Role ${isEdit ? 'updated' : 'submitted'} successfully`);
+      setShowForm(false);
+      setMobileView('categories');
+    } catch {
+      toast.error('Failed to save role');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const getCategoryColor = (category: RoleCategory) => {
@@ -309,7 +358,6 @@ export default function RolesPermissions() {
                       onClick={() => {
                         setSelectedCategory(category.id as RoleCategory);
                         setShowForm(false);
-                        setSelectedRole(null);
                       }}
                       style={{
                         backgroundColor: isSelected ? `${category.bgColor}70` : 'white',
@@ -328,7 +376,7 @@ export default function RolesPermissions() {
                           {category.name}
                         </p>
                         <p className="text-xs text-gray-500">
-                          {mockRoleTemplates.filter(r => r.category === category.id).length} roles
+                          {apiRoles.filter(r => r.category === category.id).length} roles
                         </p>
                       </div>
                       {isSelected && <ChevronRight style={{ color: category.color }} className="w-4 h-4" />}
@@ -351,8 +399,8 @@ export default function RolesPermissions() {
                   <select
                     value={selectedState}
                     onChange={(e) => setSelectedState(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2"
-                    style={{ focusRingColor: theme.colors.primary }}
+                    className="w-full px-3 py-2 border border-[#E5E7EB] rounded-lg text-sm outline-none "
+                    // style={{ focusRingColor: theme.colors.primary }}
                   >
                     {indianStates.map(state => (
                       <option key={state} value={state}>{state}</option>
@@ -367,8 +415,8 @@ export default function RolesPermissions() {
                   <select
                     value={selectedCouncil}
                     onChange={(e) => setSelectedCouncil(e.target.value)}
-                    className="w-full px-3 py-2 border-[0.76px] border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2"
-                    style={{ focusRingColor: theme.colors.primary }}
+                    className="w-full px-3 py-2 border-[0.76px] border-[#E5E7EB] rounded-lg text-sm outline-none"
+                    // style={{ focusRingColor: theme.colors.primary }}
                   >
                     {councils.map(council => (
                       <option key={council} value={council}>{council}</option>
@@ -404,38 +452,45 @@ export default function RolesPermissions() {
 
                 <Separator className="my-4" />
 
-                {filteredRoles.length === 0 ? (
+                {loadingRoles ? (
+                  <div className="flex justify-center py-4">
+                    <Loader2 className="w-5 h-5 animate-spin text-[#1F7A4D]" />
+                  </div>
+                ) : filteredDbRoles.length === 0 ? (
                   <div className="text-center py-8">
                     <Users className="w-12 h-12 text-[#99A1AF] mx-auto mb-3" />
                     <p className="text-sm text-[#6A7282]">No roles found</p>
                   </div>
                 ) : (
-                  filteredRoles.map((role) => (
-                    <button
-                      key={role.id}
-                      onClick={() => handleRoleSelect(role)}
-                      className={`w-full text-left p-4 rounded-lg border border-[#E5E7EB] transition-all cursor-pointer ${selectedRole?.id === role.id
-                          ? 'bg-opacity-5'
-                          : 'bg-[#ffffff] hover:border-[#E5E7EB]'
-                        }`}
-                      style={{
-                        borderColor: selectedRole?.id === role.id ? `${theme.colors.primary}30` : theme.colors.gray[200],
-                        backgroundColor: selectedRole?.id === role.id ? `${theme.colors.primary}0d` : 'white'
-                      }}
-                    >
-                      <div className="flex items-start justify-between mb-2">
+                  filteredDbRoles.map(role => (
+                    <button key={role._id}
+                      onClick={() => handleApiRoleSelect(role)}
+                      className={`w-full text-left p-4 rounded-lg border transition-all cursor-pointer ${
+                        (formData as any).id === role._id
+                          ? 'border-[#1F7A4D]/40 bg-[#1F7A4D]/5'
+                          : 'border-[#E5E7EB] bg-white hover:border-[#1F7A4D]/30'
+                      }`}>
+                      <div className="flex items-start justify-between mb-1">
                         <h3 className="font-medium text-[#242424] text-sm">{role.title}</h3>
-                        <Badge variant="secondary" className="text-xs text-[#242424]">
-                          {role.activeInstances} active
-                        </Badge>
+                        <span
+                          onClick={(e) => { e.stopPropagation(); setDeleteConfirm({ show: true, id: role._id, title: role.title }); }}
+                          className="p-1 hover:bg-red-50 rounded text-[#FB2C36] transition-colors cursor-pointer">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </span>
                       </div>
-                      <p className="text-xs text-[#6A7282] mb-2">{role.description}</p>
-                      {role.state && (
-                        <Badge variant="outline" className="text-xs">
-                          <MapPin className="w-3 h-3 mr-1" />
-                          {role.state}
-                        </Badge>
-                      )}
+                      <p className="text-xs text-[#6A7282] mb-2">{role.designation}</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {role.photo && (
+                          <img src={`${BASE_URL}${role.photo}`} alt={role.title}
+                            className="w-6 h-6 rounded-full object-cover border border-[#e5e7eb]" />
+                        )}
+                        {role.state && (
+                          <Badge variant="outline" className="text-xs">
+                            <MapPin className="w-3 h-3 mr-1" />{role.state}
+                          </Badge>
+                        )}
+                        <Badge variant="secondary" className="text-xs bg-[#ecfdf5] text-[#1F7A4D]">Saved</Badge>
+                      </div>
                     </button>
                   ))
                 )}
@@ -452,17 +507,14 @@ export default function RolesPermissions() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-lg font-semibold text-[#101828]">
-                      {selectedRole ? `New Instance: ${selectedRole.title}` : 'Create New Role'}
+                      {(formData as any).id ? `Edit Role: ${formData.title}` : 'Create New Role'}
                     </h2>
                     <p className="text-sm text-[#6A7282]">Define role details and permissions</p>
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => {
-                      setShowForm(false);
-                      setSelectedRole(null);
-                    }}
+                    onClick={() => setShowForm(false)}
                   >
                     <X className="w-4 h-4" />
                   </Button>
@@ -480,12 +532,13 @@ export default function RolesPermissions() {
 
                     <div className="space-y-4">
                       <div>
-                        <Label htmlFor="title">Role Title <span className="text-red-500">*</span></Label>
+                        <Label htmlFor="title">Role Title <span className="text-[#FB2C36]">*</span></Label>
                         <Input
                           id="title"
                           value={formData.title}
                           onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
                           placeholder="e.g., State President"
+                          className='bg-[#F9FAFB] border-[0.8px] border-[#000000]/0% rounded-lg'
                         />
                       </div>
 
@@ -522,12 +575,13 @@ export default function RolesPermissions() {
                       </div>
 
                       <div>
-                        <Label htmlFor="designation">Designation <span className="text-red-500">*</span></Label>
+                        <Label htmlFor="designation">Designation <span className="text-[#FB2C36]">*</span></Label>
                         <Input
                           id="designation"
                           value={formData.designation}
                           onChange={(e) => setFormData(prev => ({ ...prev, designation: e.target.value }))}
                           placeholder="e.g., Chief Executive Officer"
+                          className='bg-[#F9FAFB] border-[0.8px] border-[#000000]/0% rounded-lg'
                         />
                       </div>
 
@@ -538,6 +592,7 @@ export default function RolesPermissions() {
                           value={formData.companyName}
                           onChange={(e) => setFormData(prev => ({ ...prev, companyName: e.target.value }))}
                           placeholder="Optional"
+                          className='bg-[#F9FAFB] border-[0.8px] border-[#000000]/0% rounded-lg'
                         />
                       </div>
                     </div>
@@ -613,6 +668,7 @@ export default function RolesPermissions() {
                         value={formData.companyDescription}
                         onChange={(e) => setFormData(prev => ({ ...prev, companyDescription: e.target.value }))}
                         placeholder="Enter company description (if applicable)"
+                        className='bg-[#F9FAFB] border-[0.8px] border-[#000000]/0% rounded-lg'
                         rows={3}
                       />
                     </div>
@@ -630,12 +686,13 @@ export default function RolesPermissions() {
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="mobile">Mobile Number <span className="text-red-500">*</span></Label>
+                          <Label htmlFor="mobile">Mobile Number <span className="text-[#FB2C36]">*</span></Label>
                           <Input
                             id="mobile"
                             value={formData.mobile}
                             onChange={(e) => setFormData(prev => ({ ...prev, mobile: e.target.value }))}
                             placeholder="+91 XXXXX XXXXX"
+                            className='bg-[#F9FAFB] border-[0.8px] border-[#000000]/0% rounded-lg'
                           />
                         </div>
 
@@ -646,12 +703,13 @@ export default function RolesPermissions() {
                             value={formData.landline}
                             onChange={(e) => setFormData(prev => ({ ...prev, landline: e.target.value }))}
                             placeholder="Optional"
+                            className='bg-[#F9FAFB] border-[0.8px] border-[#000000]/0% rounded-lg'
                           />
                         </div>
                       </div>
 
                       <div>
-                        <Label htmlFor="email">Email Address <span className="text-red-500">*</span></Label>
+                        <Label htmlFor="email">Email Address <span className="text-[#FB2C36]">*</span></Label>
                         <div className="relative">
                           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                           <Input
@@ -660,7 +718,7 @@ export default function RolesPermissions() {
                             value={formData.email}
                             onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                             placeholder="email@example.com"
-                            className="pl-10"
+                            className="pl-10 bg-[#F9FAFB] border-[0.8px] border-[#000000]/0% rounded-lg"
                           />
                         </div>
                       </div>
@@ -674,19 +732,20 @@ export default function RolesPermissions() {
                             value={formData.website}
                             onChange={(e) => setFormData(prev => ({ ...prev, website: e.target.value }))}
                             placeholder="https://example.com"
-                            className="pl-10"
+                            className="pl-10 bg-[#F9FAFB] border-[0.8px] border-[#000000]/0% rounded-lg"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <Label htmlFor="address">Address <span className="text-red-500">*</span></Label>
+                        <Label htmlFor="address">Address <span className="text-[#FB2C36]">*</span></Label>
                         <Textarea
                           id="address"
                           value={formData.address}
                           onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
                           placeholder="Complete address"
                           rows={3}
+                          className='bg-[#F9FAFB] border-[0.8px] border-[#000000]/0% rounded-lg'
                         />
                       </div>
                     </div>
@@ -699,11 +758,31 @@ export default function RolesPermissions() {
                   <div>
                     <h3 className="text-sm font-semibold text-[#101828] mb-4 flex items-center gap-2">
                       <Eye className="w-4 h-4" style={{ color: theme.colors.primary }} />
-                      Permissions Preview
-                      <Badge variant="secondary" className="ml-2 bg-[#F9FAFB] text-[#030213] rounded-[3px]">Read-only</Badge>
+                      Permissions
                     </h3>
 
                     <div className="space-y-4">
+
+                      {/* IWPA Directory */}
+                      <Card className="p-4" style={{ backgroundColor: '#F0FDF4', borderColor: '#A4F4CF' }}>
+                        <div className="flex items-center gap-2 mb-3">
+                          <FolderOpen className="w-4 h-4 text-[#1F7A4D]" />
+                          <span className="text-sm font-medium text-[#0D3D26]">IWPA Directory</span>
+                          <span className="ml-auto text-xs text-[#6A7282] bg-[#D0FAE5] px-2 py-0.5 rounded-full">All roles</span>
+                        </div>
+                        <div className="flex gap-4">
+                          {['View All', 'Download'].map(v => (
+                            <label key={v} className="flex items-center gap-2 cursor-pointer">
+                              <input type="radio" name="iwpaDirectory" value={v}
+                                checked={formData.permissions?.iwpaDirectory === v}
+                                onChange={(e) => setFormData(prev => ({ ...prev, permissions: { ...prev.permissions!, iwpaDirectory: e.target.value } }))}
+                                className="w-4 h-4" />
+                              <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">{v}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </Card>
+
                       <Card className="p-4" style={{ backgroundColor: '#EFF6FF', borderColor: '#BEDBFF' }}>
                         <div className="flex items-center gap-2 mb-3">
                           <Bell className="w-4 h-4 text-[#155DFC]" />
@@ -970,50 +1049,39 @@ export default function RolesPermissions() {
                           <span className="text-sm font-medium text-[#59168B]">Messaging</span>
                         </div>
                         <div className="flex gap-4">
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="radio"
-                              name="messaging"
-                              value="View All"
-                              checked={formData.permissions?.messaging === 'View All'}
-                              onChange={(e) => setFormData(prev => ({
-                                ...prev,
-                                permissions: { ...prev.permissions!, messaging: e.target.value }
-                              }))}
-                              className="w-4 h-4 text-[#155DFC] bg-[#ffffff] border border-[#E5E5E5]"
-                            />
-                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">View All</span>
-                          </label>
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="radio"
-                              name="messaging"
-                              value="Modify"
-                              checked={formData.permissions?.messaging === 'Modify'}
-                              onChange={(e) => setFormData(prev => ({
-                                ...prev,
-                                permissions: { ...prev.permissions!, messaging: e.target.value }
-                              }))}
-                              className="w-4 h-4 text-[#155DFC] bg-[#ffffff] border border-[#E5E5E5]"
-                            />
-                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">Modify</span>
-                          </label>
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="radio"
-                              name="messaging"
-                              value="Edit"
-                              checked={formData.permissions?.messaging === 'Edit'}
-                              onChange={(e) => setFormData(prev => ({
-                                ...prev,
-                                permissions: { ...prev.permissions!, messaging: e.target.value }
-                              }))}
-                              className="w-4 h-4 text-[#155DFC] bg-[#ffffff] border border-[#E5E5E5]"
-                            />
-                            <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">Edit</span>
-                          </label>
+                          {['View All', 'Modify', 'Edit'].map(v => (
+                            <label key={v} className="flex items-center gap-2 cursor-pointer">
+                              <input type="radio" name="messaging" value={v}
+                                checked={formData.permissions?.messaging === v}
+                                onChange={(e) => setFormData(prev => ({ ...prev, permissions: { ...prev.permissions!, messaging: e.target.value } }))}
+                                className="w-4 h-4 text-[#155DFC] bg-[#ffffff] border border-[#E5E5E5]" />
+                              <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">{v}</span>
+                            </label>
+                          ))}
                         </div>
                       </Card>
+
+                      {/* Accounting — State Coordinators only */}
+                      <Card className="p-4" style={{ backgroundColor: '#FFFBEB', borderColor: '#FEE685' }}>
+                        <div className="flex items-center gap-2 mb-3">
+                          <Calculator className="w-4 h-4 text-[#E17100]" />
+                          <span className="text-sm font-medium text-[#7B3306]">Accounting</span>
+                          <span className="ml-auto text-xs text-[#6A7282] bg-[#FEF3C6] px-2 py-0.5 rounded-full">State Coordinators</span>
+                        </div>
+                        <div className="flex gap-4">
+                          {['None', 'View All', 'Edit'].map(v => (
+                            <label key={v} className="flex items-center gap-2 cursor-pointer">
+                              <input type="radio" name="accounting" value={v}
+                                checked={formData.permissions?.accounting === v}
+                                onChange={(e) => setFormData(prev => ({ ...prev, permissions: { ...prev.permissions!, accounting: e.target.value } }))}
+                                className="w-4 h-4 text-[#E17100] bg-[#ffffff] border border-[#E5E5E5]" />
+                              <span className="text-xs text-[#030213] bg-[#FFFFFF] rounded-[3px] py-0.5 px-2">{v}</span>
+                            </label>
+                          ))}
+                        </div>
+                        <p className="text-xs text-[#6A7282] mt-2">Edit allows feeding expenses, uploading bills, receipts & bank statements</p>
+                      </Card>
+
                     </div>
                   </div>
                 </div>
@@ -1031,9 +1099,10 @@ export default function RolesPermissions() {
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = theme.colors.primaryDark)}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = theme.colors.primary)}
                     onClick={() => handleSubmit(false)}
+                    disabled={saving}
                   >
-                    <Save className="w-4 h-4 mr-2" />
-                    Submit & Activate
+                    {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                    {(formData as any).id ? 'Save Changes' : 'Submit & Activate'}
                   </Button>
                 </div>
               </div>
@@ -1061,6 +1130,35 @@ export default function RolesPermissions() {
         </div>
       </div>
 
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm.show && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center shrink-0">
+                <Trash2 className="w-6 h-6 text-[#FB2C36]" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-[#242424] mb-2">Delete Role</h3>
+                <p className="text-sm text-[#6a7282] mb-4">
+                  Are you sure you want to delete <strong>{deleteConfirm.title}</strong>? This action cannot be undone.
+                </p>
+                <div className="flex items-center gap-3 justify-end">
+                  <button onClick={() => setDeleteConfirm({ show: false, id: null, title: '' })}
+                    disabled={deleting}
+                    className="px-4 py-2 border border-[#e5e7eb] text-[#242424] rounded-lg hover:bg-[#f9fafb] transition-colors font-medium cursor-pointer disabled:opacity-50">
+                    Cancel
+                  </button>
+                  <button onClick={confirmDelete} disabled={deleting}
+                    className="px-4 py-2 bg-[#FB2C36] text-white rounded-lg transition-colors font-medium cursor-pointer disabled:opacity-50 inline-flex items-center gap-2">
+                    {deleting && <Loader2 className="w-4 h-4 animate-spin" />} Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

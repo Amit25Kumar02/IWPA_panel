@@ -1,5 +1,6 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
+import "react-loading-skeleton/dist/skeleton.css";
 import "./index.css";
 import "./styles/globals.css";
 import { Toaster } from "sonner";

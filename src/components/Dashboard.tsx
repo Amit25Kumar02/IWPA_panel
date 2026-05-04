@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
   FileText,
   CalendarDays,
@@ -10,8 +11,29 @@ import {
   AlertCircle,
 } from "lucide-react";
 import AdminCalendar from "./ActionCalendar";
+import api from "../utils/api";
 
 export default function Dashboard() {
+  const [members, setMembers] = useState<any[]>([]);
+
+  useEffect(() => {
+    api.get("/api/v1/members/get-members")
+      .then(res => setMembers(Array.isArray(res.data?.data) ? res.data.data : []))
+      .catch(() => {});
+  }, []);
+
+  const getPaymentStatus = (m: any) => {
+    const received = m.payment?.totalReceived ?? 0;
+    const due = m.billing?.netReceivable ?? 0;
+    if (due === 0 && received === 0) return "Pending";
+    return received >= due ? "Paid" : "Pending";
+  };
+
+  const totalMembers = members.length;
+  const paidMembers = members.filter(m => getPaymentStatus(m) === "Paid").length;
+  const dueMembers = members.filter(m => getPaymentStatus(m) === "Pending").length;
+  const totalCollection = members.reduce((sum, m) => sum + (m.payment?.totalReceived ?? 0), 0);
+
   return (
     <div className="p-6 space-y-6 bg-background min-h-screen">
       {/* Welcome Banner */}
@@ -26,10 +48,10 @@ export default function Dashboard() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Stat title="Total Members" value="156" growth="+12%" icon={<Users />} color="purple" bg="purple" />
-        <Stat title="Paid Members" value="156" growth="+12%" icon={<Users />} color="green" bg="green" />
-        <Stat title="Members with due" value="8" growth="+2%" icon={<AlertCircle />} color="amber" bg="amber" />
-        <Stat title="Total subscription collection" value="12" growth="+5%" icon={<CalendarDays />} color="blue" bg="blue" />
+        <Stat title="Total Members" value={totalMembers} growth="+12%" icon={<Users />} color="purple" bg="purple" />
+        <Stat title="Paid Members" value={paidMembers} growth="+12%" icon={<Users />} color="green" bg="green" />
+        <Stat title="Members with due" value={dueMembers} growth="+2%" icon={<AlertCircle />} color="amber" bg="amber" />
+        <Stat title="Total subscription collection" value={`₹${totalCollection.toLocaleString("en-IN")}`} growth="+5%" icon={<CalendarDays />} color="blue" bg="blue" />
       </div>
 
       {/* Admin Calendar */}

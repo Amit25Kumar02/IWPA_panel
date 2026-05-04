@@ -1,32 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
-    CalendarDays,
-    MapPin,
-    Users,
-    ArrowRight,
-    Clock,
-    Calendar,
-    LocateFixedIcon,
-    ArrowLeft,
-    ExternalLink,
+    CalendarDays, MapPin, Users, Clock, Calendar,
+    ArrowLeft, ExternalLink,
 } from "lucide-react";
+import api from "../utils/api";
+import { imgUrl } from "../utils/imgUrl";
+import { EventCardsSkeleton } from "./ui/Shimmer";
 
-interface AgendaItem {
-    time: string;
-    description: string;
-    speaker?: string;
-}
-
-interface Speaker {
-    name: string;
-    title: string;
-    image?: string;
-}
-
+interface AgendaItem { time: string; description: string; speaker?: string; }
+interface Speaker { name: string; title: string; image?: string; }
 interface Event {
-    id: number;
+    id: string;
+    _id?: string;
     title: string;
     shortDescription: string;
     fullDescription?: string;
@@ -42,201 +29,134 @@ interface Event {
     speakers?: Speaker[];
 }
 
+const SEED_EVENTS: Event[] = [
+    {
+        id: "1",
+        title: "Wind Energy Technology Summit 2026",
+        shortDescription: "Join us for the premier wind energy technology summit showcasing the latest innovations, policy updates, and networking opportunities in the renewable energy sector.",
+        fullDescription: "The Wind Energy Technology Summit 2026 is IWPA's flagship annual event bringing together industry leaders, policymakers, and researchers.",
+        date: "15 February 2026", time: "09:00 AM - 05:00 PM",
+        location: "India Habitat Centre, New Delhi", address: "Lodi Road, New Delhi, Delhi 110003",
+        attendees: "500 Expected Attendees", price: "Free for Members", badge: "Internal",
+        image: "https://images.unsplash.com/photo-1503428593586-e225b39bddfe?w=1200",
+        agenda: [
+            { time: "09:00 AM", description: "Registration & Breakfast" },
+            { time: "10:00 AM", description: "Opening Keynote – Dr. Rajesh Kumar", speaker: "Dr. Rajesh Kumar" },
+            { time: "12:30 PM", description: "Lunch Break" },
+            { time: "02:00 PM", description: "Technical Sessions", speaker: "Various Speakers" },
+            { time: "05:00 PM", description: "Closing Remarks", speaker: "IWPA President" },
+        ],
+        speakers: [
+            { name: "Dr. Rajesh Kumar", title: "Chief Scientist, NIWE", image: "https://randomuser.me/api/portraits/men/32.jpg" },
+            { name: "Ms. Priya Sharma", title: "Policy Advisor, MNRE", image: "https://randomuser.me/api/portraits/women/44.jpg" },
+        ],
+    },
+    {
+        id: "2",
+        title: "National Council Quarterly Meeting",
+        shortDescription: "Quarterly review meeting for National Council members.",
+        date: "20 January 2026", time: "Virtual", location: "Virtual",
+        attendees: "50 Expected Attendees", price: "Members Only", badge: "Internal",
+        image: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200",
+    },
+    {
+        id: "3",
+        title: "Renewable Energy Expo 2026",
+        shortDescription: "International exhibition featuring renewable energy solutions.",
+        date: "10 March 2026", time: "All Day",
+        location: "Bombay Exhibition Centre, Mumbai",
+        attendees: "2000+ Attendees", price: "₹5,000", badge: "Partnered",
+        image: "https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=800&auto=format&fit=crop",
+    },
+];
+
 export default function EventsMemberPage() {
+    const [events, setEvents] = useState<Event[]>([]);
+    const [loading, setLoading] = useState(true);
     const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
-    const events: Event[] = [
-        {
-            id: 1,
-            title: "Wind Energy Technology Summit 2026",
-            shortDescription: "Join us for the premier wind energy technology summit showcasing the latest innovations, policy updates, and networking opportunities in the renewable energy sector.",
-            fullDescription:
-                "The Wind Energy Technology Summit 2026 is IWPA’s flagship annual event bringing together industry leaders, policymakers, and researchers.",
-            date: "15 February 2026",
-            time: "09:00 AM - 05:00 PM",
-            location: "India Habitat Centre, New Delhi",
-            address: "Lodi Road, New Delhi, Delhi 110003",
-            attendees: "500 Expected Attendees",
-            price: "Free for Members",
-            badge: "Internal",
-            image:
-                "https://images.unsplash.com/photo-1503428593586-e225b39bddfe?w=1200",
-            agenda: [
-                { time: "09:00 AM", description: "Registration & Breakfast" },
-                { time: "10:00 AM", description: "Opening Keynote – Dr. Rajesh Kumar", speaker: "Dr. Rajesh Kumar" },
-                { time: "11:00 AM", description: "Panel Discussion: Policy Frameworks", speaker: "Industry Leaders" },
-                { time: "12:30 PM", description: "Lunch Break" },
-                { time: "02:00 PM", description: "Technical Sessions", speaker: "Various Speakers" },
-                { time: "04:00 PM", description: "Networking Session" },
-                { time: "05:00 PM", description: "Closing Remarks", speaker: "IWPA President" },
-            ],
-            speakers: [
-                { name: "Dr. Rajesh Kumar", title: "Chief Scientist, NIWE", image: "https://randomuser.me/api/portraits/men/32.jpg" },
-                { name: "Ms. Priya Sharma", title: "Policy Advisor, MNRE", image: "https://randomuser.me/api/portraits/women/44.jpg" },
-                { name: "Mr. Arun Mehta", title: "CEO, WindTech India", image: "https://randomuser.me/api/portraits/men/22.jpg" },
-            ],
-        },
-        {
-            id: 2,
-            title: "National Council Quarterly Meeting",
-            shortDescription: "Quarterly review meeting for National Council members.",
-            date: "20 January 2026",
-            time: "Virtual",
-            location: "Virtual",
-            attendees: "50 Expected Attendees",
-            price: "Members Only",
-            badge: "Internal",
-            image:
-                "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200",
-            agenda: [
-                { time: "09:00 AM", description: "Registration & Breakfast" },
-                { time: "10:00 AM", description: "Opening Keynote – Dr. Rajesh Kumar" },
-                { time: "11:00 AM", description: "Panel Discussion: Policy Frameworks" },
-                { time: "12:30 PM", description: "Lunch Break" },
-                { time: "02:00 PM", description: "Technical Sessions" },
-                { time: "04:00 PM", description: "Networking Session" },
-                { time: "05:00 PM", description: "Closing Remarks" },
-            ],
-            speakers: [
-                { name: "Dr. Rajesh Kumar", title: "Chief Scientist, NIWE" },
-                { name: "Ms. Priya Sharma", title: "Policy Advisor, MNRE" },
-                { name: "Mr. Arun Mehta", title: "CEO, WindTech India" },
-            ],
-        },
-        {
-            id: 3,
-            title: "Renewable Energy Expo 2026",
-            shortDescription: "International exhibition featuring renewable energy solutions.",
-            date: "10 March 2026",
-            time: "All Day",
-            location: "Bombay Exhibition Centre, Mumbai",
-            attendees: "2000+ Attendees",
-            price: "₹5,000",
-            badge: "Partnered",
-            image:
-                "https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=800&auto=format&fit=crop",
-
-            agenda: [
-                { time: "09:00 AM", description: "Registration & Breakfast" },
-                { time: "10:00 AM", description: "Opening Keynote – Dr. Rajesh Kumar" },
-                { time: "11:00 AM", description: "Panel Discussion: Policy Frameworks" },
-                { time: "12:30 PM", description: "Lunch Break" },
-                { time: "02:00 PM", description: "Technical Sessions" },
-                { time: "04:00 PM", description: "Networking Session" },
-                { time: "05:00 PM", description: "Closing Remarks" },
-            ],
-            speakers: [
-                { name: "Dr. Rajesh Kumar", title: "Chief Scientist, NIWE" },
-                { name: "Ms. Priya Sharma", title: "Policy Advisor, MNRE" },
-                { name: "Mr. Arun Mehta", title: "CEO, WindTech India" },
-            ],
-        },
-        {
-            id: 1,
-            title: "Wind Energy Technology Summit 2026",
-            shortDescription: "Join us for the premier wind energy technology summit showcasing the latest innovations, policy updates, and networking opportunities in the renewable energy sector.",
-            fullDescription:
-                "The Wind Energy Technology Summit 2026 is IWPA’s flagship annual event bringing together industry leaders, policymakers, and researchers.",
-            date: "15 February 2026",
-            time: "09:00 AM - 05:00 PM",
-            location: "India Habitat Centre, New Delhi",
-            address: "Lodi Road, New Delhi, Delhi 110003",
-            attendees: "500 Expected Attendees",
-            price: "Free for Members",
-            badge: "Internal",
-            image:
-                "https://images.unsplash.com/photo-1503428593586-e225b39bddfe?w=1200",
-            agenda: [
-                { time: "09:00 AM", description: "Registration & Breakfast" },
-                { time: "10:00 AM", description: "Opening Keynote – Dr. Rajesh Kumar", speaker: "Dr. Rajesh Kumar" },
-                { time: "11:00 AM", description: "Panel Discussion: Policy Frameworks", speaker: "Industry Leaders" },
-                { time: "12:30 PM", description: "Lunch Break" },
-                { time: "02:00 PM", description: "Technical Sessions", speaker: "Various Speakers" },
-                { time: "04:00 PM", description: "Networking Session" },
-                { time: "05:00 PM", description: "Closing Remarks", speaker: "IWPA President" },
-            ],
-            speakers: [
-                { name: "Dr. Rajesh Kumar", title: "Chief Scientist, NIWE", image: "https://randomuser.me/api/portraits/men/32.jpg" },
-                { name: "Ms. Priya Sharma", title: "Policy Advisor, MNRE", image: "https://randomuser.me/api/portraits/women/44.jpg" },
-                { name: "Mr. Arun Mehta", title: "CEO, WindTech India", image: "https://randomuser.me/api/portraits/men/22.jpg" },
-            ],
-        },
-    ];
+    useEffect(() => {
+        async function fetchEvents() {
+            try {
+                const { data } = await api.get("/api/v1/events/get-events");
+                const raw: Event[] = Array.isArray(data)
+                    ? data
+                    : Array.isArray(data?.data)
+                    ? data.data
+                    : Array.isArray(data?.events)
+                    ? data.events
+                    : [];
+                const list = raw.map(e => ({ ...e, id: e._id ?? e.id }));
+                setEvents(list.length ? list : SEED_EVENTS);
+            } catch {
+                setEvents(SEED_EVENTS);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchEvents();
+    }, []);
 
     /* ---------------- GRID VIEW ---------------- */
     if (!selectedEvent) {
         return (
             <div className="p-6 space-y-6 max-w-7xl mx-auto">
-                <div className="bg-[#FFFFFF] rounded-[14px]  p-6">
+                <div className="bg-[#FFFFFF] rounded-[14px] p-6">
                     <h1 className="text-[24px] text-[#101828] font-bold">Events</h1>
                     <p className="text-[16px] text-[#4A5565]">
                         Discover and register for IWPA events, conferences, and industry gatherings
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {events.map((event) => (
-                        <div
-                            key={event.id}
-                            className="bg-[#FFFFFF]  rounded-[14px] border-[0.8px] border-[#E5E7EB] overflow-hidden hover:shadow-md transition"
-                        >
-                            <div className="relative h-48">
-                                <img
-                                    src={event.image}
-                                    alt={event.title}
-                                    className="w-full h-full object-cover"
-                                />
-                                {event.badge && (
-                                    <span
-                                        className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-medium ${event.badge === "Partnered"
-                                            ? "bg-[#155DFC] text-[#ffffff]"
-                                            : "bg-[#009966] text-[#ffffff]"
-                                            }`}
-                                    >
-                                        {event.badge}
-                                    </span>
-                                )}
-                            </div>
-
-                            <div className="p-4 flex flex-col flex-1 space-y-3">
-                                <h3 className="font-semibold text-[18px] text-[#101828]">{event.title}</h3>
-
-                                <div className="text-[14px] text-[#4A5565] space-y-2">
-                                    <div className="flex items-center gap-2">
-                                        <CalendarDays className="w-4 h-4" />
-                                        {event.date}
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <MapPin className="w-4 h-4" />
-                                        {event.location}
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <Users className="w-4 h-4" />
-                                        {event.attendees}
-                                    </div>
-                                </div>
-
-                                <p className="text-[14px] text-[#4A5565] line-clamp-2 mb-4">
-                                    {event.shortDescription}
-                                </p>
-
-                                <div className="border-t-[0.8px] border-[#E5E7EB] py-4 mt-auto ">
-                                    <div className="flex flex-wrap justify-between items-center gap-2">
-                                        <span className="text-sm font-medium text-[#009966]">
-                                            {event.price}
+                {loading ? (
+                    <EventCardsSkeleton count={6} />
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {events.map((event) => (
+                            <div
+                                key={event.id}
+                                className="bg-[#FFFFFF] rounded-[14px] border-[0.8px] border-[#E5E7EB] overflow-hidden hover:shadow-md transition"
+                            >
+                                <div className="relative h-48">
+                                    <img
+                                        src={imgUrl(event.image)}
+                                        alt={event.title}
+                                        className="w-full h-full object-cover"
+                                    />
+                                    {event.badge && (
+                                        <span className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-medium ${event.badge === "Partnered" ? "bg-[#155DFC] text-[#ffffff]" : "bg-[#009966] text-[#ffffff]"}`}>
+                                            {event.badge}
                                         </span>
-                                        <button
-                                            onClick={() => setSelectedEvent(event)}
-                                            className="text-sm text-[#009966] flex items-center gap-1 hover:underline cursor-pointer"
-                                        >
-                                            View Details <ExternalLink className="w-4 h-4" />
-                                        </button>
+                                    )}
+                                </div>
+
+                                <div className="p-4 flex flex-col flex-1 space-y-3">
+                                    <h3 className="font-semibold text-[18px] text-[#101828]">{event.title}</h3>
+
+                                    <div className="text-[14px] text-[#4A5565] space-y-2">
+                                        <div className="flex items-center gap-2"><CalendarDays className="w-4 h-4" />{event.date}</div>
+                                        <div className="flex items-center gap-2"><MapPin className="w-4 h-4" />{event.location}</div>
+                                        <div className="flex items-center gap-2"><Users className="w-4 h-4" />{event.attendees}</div>
+                                    </div>
+
+                                    <p className="text-[14px] text-[#4A5565] line-clamp-2 mb-4">{event.shortDescription}</p>
+
+                                    <div className="border-t-[0.8px] border-[#E5E7EB] py-4 mt-auto">
+                                        <div className="flex flex-wrap justify-between items-center gap-2">
+                                            <span className="text-sm font-medium text-[#009966]">{event.price}</span>
+                                            <button
+                                                onClick={() => setSelectedEvent(event)}
+                                                className="text-sm text-[#009966] flex items-center gap-1 hover:underline cursor-pointer"
+                                            >
+                                                View Details <ExternalLink className="w-4 h-4" />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                )}
             </div>
         );
     }
@@ -248,26 +168,21 @@ export default function EventsMemberPage() {
                 onClick={() => setSelectedEvent(null)}
                 className="text-[16px] text-[#009966] font-medium cursor-pointer hover:underline flex items-center gap-1"
             >
-                <ArrowLeft className="w-4 h-4" />
-                Back to Events
+                <ArrowLeft className="w-4 h-4" /> Back to Events
             </button>
 
             {/* Hero */}
             <div className="relative h-96 rounded-xl overflow-hidden">
-                <img
-                    src={selectedEvent.image}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    alt=""
-                />
-                <div className="absolute inset-0 bg-linear-to-r from-[#00000099] to-[#00000010]" />
+                <img src={imgUrl(selectedEvent.image)} className="absolute inset-0 w-full h-full object-cover" alt="" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#00000099] to-[#00000010]" />
                 <div className="absolute bottom-10 left-6 text-[#ffffff] max-w-5xl">
-                    <span className="inline-block bg-[#009966] text-xs px-3 py-1 rounded-full mb-2">
-                        {selectedEvent.badge} Event
-                    </span>
+                    {selectedEvent.badge && (
+                        <span className="inline-block bg-[#009966] text-xs px-3 py-1 rounded-full mb-2">
+                            {selectedEvent.badge} Event
+                        </span>
+                    )}
                     <h1 className="text-[36px] text-[#ffffff] font-bold">{selectedEvent.title}</h1>
-                    <p className="text-[18px] text-[#FFFFFFE5] mt-1">
-                        {selectedEvent.shortDescription}
-                    </p>
+                    <p className="text-[18px] text-[#FFFFFFE5] mt-1">{selectedEvent.shortDescription}</p>
                 </div>
             </div>
 
@@ -278,55 +193,30 @@ export default function EventsMemberPage() {
                         <div className="mb-10">
                             <h2 className="font-semibold text-[#101828] text-[20px] mb-4">Event Details</h2>
                             <div className="grid sm:grid-cols-2 gap-6">
-                                <Info
-                                    type="date"
-                                    label="Date"
-                                    value={selectedEvent.date}
-                                />
-
-                                <Info
-                                    type="time"
-                                    label="Time"
-                                    value={selectedEvent.time}
-                                />
-
-                                <Info
-                                    type="location"
-                                    label="Location"
-                                    value={selectedEvent.location}
-                                    subValue={selectedEvent.address}
-                                />
-
-                                <Info
-                                    type="attendees"
-                                    label="Expected Attendees"
-                                    value={selectedEvent.attendees}
-                                />
+                                <Info type="date" label="Date" value={selectedEvent.date} />
+                                <Info type="time" label="Time" value={selectedEvent.time} />
+                                <Info type="location" label="Location" value={selectedEvent.location} subValue={selectedEvent.address} />
+                                <Info type="attendees" label="Expected Attendees" value={selectedEvent.attendees} />
                             </div>
                         </div>
-
                         {selectedEvent.fullDescription && (
-                            <div >
+                            <div>
                                 <h2 className="font-semibold text-[#101828] text-[18px] mb-2">About the Event</h2>
-                                <p className="text-[16px] text-[#4A5565]">
-                                    {selectedEvent.fullDescription}
-                                </p>
+                                <p className="text-[16px] text-[#4A5565]">{selectedEvent.fullDescription}</p>
                             </div>
                         )}
                     </div>
 
-                    {selectedEvent.agenda && (
+                    {selectedEvent.agenda && selectedEvent.agenda.length > 0 && (
                         <div className="bg-[#ffffff] border-[0.8px] border-[#E5E7EB] rounded-[14px] p-6">
                             <h2 className="font-semibold text-[#101828] text-[20px] mb-4">Event Agenda</h2>
                             <div className="space-y-3">
                                 {selectedEvent.agenda.map((a, i) => (
-                                    <div key={i} className="flex gap-16 text-sm border-b-[0.8px] border-[#E5E7EB] py-3 ">
-                                        <span className="text-[#009966] text-sm font-medium ">
-                                            {a.time}
-                                        </span>
-                                        <div >
+                                    <div key={i} className="flex gap-16 text-sm border-b-[0.8px] border-[#E5E7EB] py-3">
+                                        <span className="text-[#009966] text-sm font-medium">{a.time}</span>
+                                        <div>
                                             <h3 className="text-[#101828] text-[16px] font-medium">{a.description}</h3>
-                                            <p className="text-[#4A5565] text-sm">{a.speaker}</p>
+                                            {a.speaker && <p className="text-[#4A5565] text-sm">{a.speaker}</p>}
                                         </div>
                                     </div>
                                 ))}
@@ -334,7 +224,7 @@ export default function EventsMemberPage() {
                         </div>
                     )}
 
-                    {selectedEvent.speakers && (
+                    {selectedEvent.speakers && selectedEvent.speakers.length > 0 && (
                         <div className="bg-[#ffffff] border-[0.8px] border-[#E5E7EB] rounded-[14px] p-6">
                             <h2 className="font-semibold text-[#101828] text-[20px] mb-4">Featured Speakers</h2>
                             <div className="grid sm:grid-cols-3 gap-4">
@@ -342,7 +232,7 @@ export default function EventsMemberPage() {
                                     <div key={i} className="text-center">
                                         <div className="w-16 h-16 bg-[#E5E7EB] rounded-full mx-auto mb-2">
                                             <img
-                                                src={s.image || "https://via.placeholder.com/64"}
+                                                src={imgUrl(s.image ?? "") || "https://via.placeholder.com/64"}
                                                 alt={s.name}
                                                 className="w-full h-full object-cover rounded-full"
                                             />
@@ -359,9 +249,7 @@ export default function EventsMemberPage() {
                 {/* RIGHT */}
                 <div className="bg-white border-[0.8px] border-[#E5E7EB] rounded-[14px] p-6 h-fit sticky top-6">
                     <p className="text-sm text-[#4A5565] mb-1">Registration Fee</p>
-                    <p className="text-2xl font-bold text-[#101828] mb-4">
-                        {selectedEvent.price}
-                    </p>
+                    <p className="text-2xl font-bold text-[#101828] mb-4">{selectedEvent.price}</p>
                     <button className="w-full cursor-pointer bg-[#1F7A4D] text-[#ffffff] text-[16px] font-medium py-3 rounded-[10px] hover:bg-[#155F3B] transition">
                         Register Now
                     </button>
@@ -376,56 +264,26 @@ export default function EventsMemberPage() {
 }
 
 /* ---------- Small UI helper ---------- */
-function Info({
-    type,
-    label,
-    value,
-    subValue,
-}: {
+function Info({ type, label, value, subValue }: {
     type: "date" | "time" | "location" | "attendees";
-    label: string;
-    value: string;
-    subValue?: string;
+    label: string; value: string; subValue?: string;
 }) {
     const config = {
-        date: {
-            icon: CalendarDays,
-            bg: "bg-[#D0FAE5]",
-            color: "text-[#1F7A4D]",
-        },
-        time: {
-            icon: Clock,
-            bg: "bg-[#DBEAFE]",
-            color: "text-[#155DFC]",
-        },
-        location: {
-            icon: MapPin,
-            bg: "bg-[#F3E8FF]",
-            color: "text-[#8200DB]",
-        },
-        attendees: {
-            icon: Users,
-            bg: "bg-[#FEF3C6]",
-            color: "text-[#BB4D00]",
-        },
+        date:      { icon: CalendarDays, bg: "bg-[#D0FAE5]", color: "text-[#1F7A4D]" },
+        time:      { icon: Clock,        bg: "bg-[#DBEAFE]", color: "text-[#155DFC]" },
+        location:  { icon: MapPin,       bg: "bg-[#F3E8FF]", color: "text-[#8200DB]" },
+        attendees: { icon: Users,        bg: "bg-[#FEF3C6]", color: "text-[#BB4D00]" },
     };
-
     const Icon = config[type].icon;
-
     return (
         <div className="flex items-start gap-3">
-            <div
-                className={`w-10 h-10 rounded-lg flex items-center justify-center ${config[type].bg}`}
-            >
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${config[type].bg}`}>
                 <Icon className={`w-5 h-5 ${config[type].color}`} />
             </div>
-
             <div>
                 <p className="text-sm text-[#667085]">{label}</p>
                 <p className="text-[16px] font-medium text-[#101828]">{value}</p>
-                {subValue && (
-                    <p className="text-sm text-[#667085]">{subValue}</p>
-                )}
+                {subValue && <p className="text-sm text-[#667085]">{subValue}</p>}
             </div>
         </div>
     );

@@ -44,7 +44,7 @@ export function Login({ onLogin }: LoginProps) {
         localStorage.setItem("userType", "member");
         localStorage.setItem(
           "user",
-          JSON.stringify({ name: "Member User", email })
+          JSON.stringify({ name: "Member User", email, membershipId: "MEM-2026-001", companyName: "Member Company" })
         );
         onLogin('member');
       } else {

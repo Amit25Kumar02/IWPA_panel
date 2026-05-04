@@ -1,5 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Plus, Trash2 } from "lucide-react";
+import api from "../utils/api";
+import { toast } from "react-toastify";
+import { generateMembershipId } from "../utils/membershipId";
+
+function PhoneInput({
+  value, onChange, name, hasError,
+}: {
+  value: string; onChange: (v: string) => void; name: string; hasError?: boolean;
+}) {
+  const [countryCode, setCountryCode] = useState("+91");
+  return (
+    <div className={`flex border rounded-lg overflow-hidden ${hasError ? "border-[#FB2C36]" : "border-[#e5e7eb]"}`}>
+      <input
+        type="text"
+        value={countryCode}
+        onChange={(e) => {
+          const val = e.target.value;
+          if (/^\+?\d{0,4}$/.test(val)) setCountryCode(val.startsWith("+") ? val : "+" + val.replace(/\+/g, ""));
+        }}
+        name={`${name}_cc`}
+        autoComplete="off"
+        className="w-14 px-2 py-2 bg-[#f9fafb] border-r border-[#e5e7eb] text-sm outline-none text-center"
+        maxLength={5}
+      />
+      <input
+        type="tel"
+        name={name}
+        autoComplete="off"
+        value={value}
+        onChange={(e) => onChange(e.target.value.replace(/\D/g, "").slice(0, 10))}
+        placeholder="XXXXXXXXXX"
+        maxLength={10}
+        className="flex-1 px-3 py-2 outline-none text-sm"
+      />
+    </div>
+  );
+}
 
 const states = [
   "Andhra Pradesh",
@@ -12,6 +49,8 @@ const states = [
   "Telangana",
   "Other",
 ];
+
+const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 const categories = [
   { code: "GEM", name: "Generator (Corporate)" },
@@ -36,6 +75,18 @@ interface WindRow {
 }
 
 export default function AddNewMember({ onClose, initialData }: { onClose: () => void; initialData?: any }) {
+  const [membershipId, setMembershipId] = useState("Generating...");
+
+  useEffect(() => {
+    api.get("/api/v1/members/get-members")
+      .then((res) => {
+        const members = Array.isArray(res.data?.data) ? res.data.data : [];
+        const ids = members.map((m: any) => m.membershipId).filter(Boolean);
+        setMembershipId(generateMembershipId(ids));
+      })
+      .catch(() => setMembershipId(generateMembershipId([])));
+  }, []);
+
   const [formData, setFormData] = useState({
     state: "",
     category: "",
@@ -54,7 +105,50 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
     businessDescription: "",
     chairmanMD: "",
     groupCompany: "",
+    addRepName: "",
+    addRepDesignation: "",
+    addRepOfficePhone: "",
+    addRepMobile: "",
+    addRepEmail: "",
   });
+
+  const [countryCodes2, setCountryCodes2] = useState({
+    officePhone: "+91",
+    repOfficePhone: "+91",
+    repMobile: "+91",
+    addRepOfficePhone: "+91",
+    addRepMobile: "+91",
+  });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
+
+  const handlePhoneChange = (field: string, value: string) => {
+    const digits = value.replace(/\D/g, "").slice(0, 10);
+    setFormData((prev) => ({ ...prev, [field]: digits }));
+    setErrors((prev) => ({ ...prev, [field]: digits.length > 0 && digits.length < 10 ? "Must be 10 digits" : "" }));
+  };
+
+  const handleEmailChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: value && !validateEmail(value) ? "Invalid email" : "" }));
+  };
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.companyName.trim()) newErrors.companyName = "Required";
+    if (!formData.repName.trim()) newErrors.repName = "Required";
+    if (!formData.repDesignation.trim()) newErrors.repDesignation = "Required";
+    if (!formData.repMobile || formData.repMobile.length !== 10) newErrors.repMobile = "Must be 10 digits";
+    if (formData.repOfficePhone && formData.repOfficePhone.length !== 10) newErrors.repOfficePhone = "Must be 10 digits";
+    if (!formData.repEmail || !validateEmail(formData.repEmail)) newErrors.repEmail = "Invalid email";
+    if (formData.officePhone && formData.officePhone.length !== 10) newErrors.officePhone = "Must be 10 digits";
+    if (formData.addRepMobile && formData.addRepMobile.length !== 10) newErrors.addRepMobile = "Must be 10 digits";
+    if (formData.addRepOfficePhone && formData.addRepOfficePhone.length !== 10) newErrors.addRepOfficePhone = "Must be 10 digits";
+    if (formData.addRepEmail && !validateEmail(formData.addRepEmail)) newErrors.addRepEmail = "Invalid email";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const [windRows, setWindRows] = useState<WindRow[]>([
     {
@@ -95,34 +189,64 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
     );
   };
 
-  // Generate membership number preview
-  const getMembershipNumber = () => {
-    const { state, category, year, serialNumber, groupCompany } = formData;
-    if (!state || !category) return "Please select state and category";
-    const stateCode = state.substring(0, 2).toUpperCase();
-    const categoryCode = category;
-    const groupSuffix = groupCompany.trim() ? " (G)" : "";
-    return `${stateCode} - ${categoryCode} - ${year} - ${serialNumber}${groupSuffix}`;
+
+
+  const handleSubmit = async () => {
+    if (!validate()) return;
+    try {
+      setLoading(true);
+      await api.post("/api/v1/members/create-member", {
+        membershipId,
+        state: formData.state,
+        category: formData.category,
+        year: formData.year,
+        serialNumber: formData.serialNumber,
+        companyName: formData.companyName,
+        address: formData.address,
+        officePhone: formData.officePhone,
+        gstNo: formData.gstNo,
+        repName: formData.repName,
+        repDesignation: formData.repDesignation,
+        repOfficePhone: formData.repOfficePhone,
+        repMobile: formData.repMobile,
+        repEmail: formData.repEmail,
+        memberCategory: formData.memberCategory,
+        businessDescription: formData.businessDescription,
+        chairmanMD: formData.chairmanMD,
+        groupCompany: formData.groupCompany,
+        addRepName: formData.addRepName,
+        addRepDesignation: formData.addRepDesignation,
+        addRepOfficePhone: formData.addRepOfficePhone,
+        addRepMobile: formData.addRepMobile,
+        addRepEmail: formData.addRepEmail,
+        windDetails: windRows,
+      });
+      toast.success("Member registered successfully");
+      onClose();
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Failed to create member");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSubmit = () => {
-    // In a real app, send data to API
-    alert("Member registered (demo)");
-    onClose();
-  };
-
-  const handleSaveDraft = () => {
-    alert("Draft saved (demo)");
+  const handleSaveDraft = async () => {
+    try {
+      await api.post("/api/v1/members/save-draft", { ...formData, windDetails: windRows });
+      toast.info("Draft saved");
+    } catch {
+      toast.error("Failed to save draft");
+    }
   };
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-start justify-center overflow-y-auto">
-      <div className="bg-white w-full max-w-6xl m-4 rounded-lg shadow-xl">
+      <div className="bg-white w-full max-w-6xl mx-2 my-4 sm:m-4 rounded-lg shadow-xl">
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 border-b border-[#e5e7eb]">
+        <div className="flex items-center justify-between px-4 sm:px-8 py-4 sm:py-6 border-b border-[#e5e7eb]">
           <div>
-            <h2 className="text-2xl font-bold text-[#242424]">Add New Member / Sign Up</h2>
-            <p className="text-[#6a7282] mt-1">Complete member registration form</p>
+            <h2 className="text-lg sm:text-2xl font-bold text-[#242424]">Add New Member / Sign Up</h2>
+            <p className="text-[#6a7282] mt-1 text-sm">Complete member registration form</p>
           </div>
           <button
             onClick={onClose}
@@ -133,7 +257,7 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
         </div>
 
         {/* Body */}
-        <div className="px-8 py-6 space-y-8">
+        <div className="px-4 sm:px-8 py-4 sm:py-6 space-y-6 sm:space-y-8">
           {/* Auto Configuration */}
           {/* <Section title="Auto Configuration">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -187,18 +311,18 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
               </div>
             </div>
           </Section> */}
-          <div className="bg-linear-to-br from-[#ecfdf5] to-[#ffffff] rounded-lg border-[0.74px] border-[#a4f4cf] p-4 mt-4">
-            <div className="flex items-center justify-between">
-              <div>
+          <div className="bg-linear-to-br from-[#ecfdf5] to-[#ffffff] rounded-lg border-[0.74px] border-[#a4f4cf] p-3 sm:p-4 mt-4">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
                 <p className="text-sm font-medium text-[#6a7282] mb-1">
                   Membership Number Preview
                 </p>
-                <p className="text-xl font-bold text-[#1F7A4D] font-mono">
-                  {getMembershipNumber()}
+                <p className="text-base sm:text-xl font-bold text-[#1F7A4D] font-mono break-all">
+                  {membershipId}
                 </p>
               </div>
-              <div className="text-right">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#fef3c7] text-[#f59e0b]">
+              <div className="text-right shrink-0">
+                <span className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-[#fef3c7] text-[#f59e0b]">
                   Temporary
                 </span>
                 <p className="text-xs text-[#6a7282] mt-1">
@@ -215,6 +339,8 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
                 <Label>Company Name <span className="text-[#FB2C36]">*</span></Label>
                 <input
                   type="text"
+                  name="companyName"
+                  autoComplete="off"
                   value={formData.companyName}
                   onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                   className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
@@ -225,14 +351,16 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
                 <Label>Enter GROUP Company Name (if applicable)</Label>
                 <input
                   type="text"
-                  value={formData.companyName}
-                  onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                  name="groupCompanyName"
+                  autoComplete="off"
+                  value={formData.groupCompany}
+                  onChange={(e) => setFormData({ ...formData, groupCompany: e.target.value })}
                   className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                   placeholder="Enter Group company name"
                 />
               </div>
               <div className="md:col-span-2">
-                <Label>Address for Correspondence <span className="text-[#FB2C36]">*</span></Label>
+                <Label>Address for Correspondence (if applicable) </Label>
                 <textarea
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
@@ -243,18 +371,20 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
               </div>
               <div>
                 <Label>Office Phone</Label>
-                <input
-                  type="tel"
+                <PhoneInput
+                  name="companyOfficePhone"
                   value={formData.officePhone}
-                  onChange={(e) => setFormData({ ...formData, officePhone: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
-                  placeholder="+91 XXXXX XXXXX"
+                  onChange={(v) => handlePhoneChange("officePhone", v)}
+                  hasError={!!errors.officePhone}
                 />
+                {errors.officePhone && <p className="text-xs text-[#FB2C36] mt-1">{errors.officePhone}</p>}
               </div>
               <div>
                 <Label>GST No.</Label>
                 <input
                   type="text"
+                  name="gstNo"
+                  autoComplete="off"
                   value={formData.gstNo}
                   onChange={(e) => setFormData({ ...formData, gstNo: e.target.value })}
                   className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
@@ -271,51 +401,60 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
                 <Label>Name <span className="text-[#FB2C36]">*</span></Label>
                 <input
                   type="text"
+                  name="repName"
+                  autoComplete="off"
                   value={formData.repName}
                   placeholder="Enter name"
                   onChange={(e) => setFormData({ ...formData, repName: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
+                  className={`w-full px-3 py-2 border rounded-lg outline-none ${errors.repName ? "border-[#FB2C36]" : "border-[#e5e7eb]"}`}
                 />
+                {errors.repName && <p className="text-xs text-[#FB2C36] mt-1">{errors.repName}</p>}
               </div>
               <div>
                 <Label>Designation <span className="text-[#FB2C36]">*</span></Label>
                 <input
                   type="text"
+                  name="repDesignation"
+                  autoComplete="off"
                   value={formData.repDesignation}
                   placeholder="Enter designation"
                   onChange={(e) => setFormData({ ...formData, repDesignation: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
+                  className={`w-full px-3 py-2 border rounded-lg outline-none ${errors.repDesignation ? "border-[#FB2C36]" : "border-[#e5e7eb]"}`}
                 />
+                {errors.repDesignation && <p className="text-xs text-[#FB2C36] mt-1">{errors.repDesignation}</p>}
               </div>
               <div>
                 <Label>Office Phone</Label>
-                <input
-                  type="tel"
+                <PhoneInput
+                  name="repOfficePhone"
                   value={formData.repOfficePhone}
-                  placeholder="+91 XXXXX XXXXX"
-                  onChange={(e) => setFormData({ ...formData, repOfficePhone: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
+                  onChange={(v) => handlePhoneChange("repOfficePhone", v)}
+                  hasError={!!errors.repOfficePhone}
                 />
+                {errors.repOfficePhone && <p className="text-xs text-[#FB2C36] mt-1">{errors.repOfficePhone}</p>}
               </div>
               <div>
                 <Label>Mobile <span className="text-[#FB2C36]">*</span></Label>
-                <input
-                  type="tel"
+                <PhoneInput
+                  name="repMobile"
                   value={formData.repMobile}
-                  placeholder="+91 XXXXX XXXXX"
-                  onChange={(e) => setFormData({ ...formData, repMobile: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
+                  onChange={(v) => handlePhoneChange("repMobile", v)}
+                  hasError={!!errors.repMobile}
                 />
+                {errors.repMobile && <p className="text-xs text-[#FB2C36] mt-1">{errors.repMobile}</p>}
               </div>
               <div className="md:col-span-2">
                 <Label>Email <span className="text-[#FB2C36]">*</span></Label>
                 <input
                   type="email"
+                  name="repEmail"
+                  autoComplete="off"
                   value={formData.repEmail}
-                  onChange={(e) => setFormData({ ...formData, repEmail: e.target.value })}
-                  className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
+                  onChange={(e) => handleEmailChange("repEmail", e.target.value)}
+                  className={`w-full px-3 py-2 border rounded-lg outline-none ${errors.repEmail ? "border-[#FB2C36]" : "border-[#e5e7eb]"}`}
                   placeholder="email@example.com"
                 />
+                {errors.repEmail && <p className="text-xs text-[#FB2C36] mt-1">{errors.repEmail}</p>}
               </div>
             </div>
           </Section>
@@ -362,77 +501,77 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
             >
 
               <div className="border border-[#e5e7eb] rounded-lg overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
+                <div className="overflow-x-auto -mx-0">
+                  <table className="w-full min-w-175">
                     <thead className="bg-[#f9fafb] border-b border-[#e5e7eb]">
                       <tr>
-                        <th className="text-left px-4 py-3 text-sm font-medium">Location</th>
-                        <th className="text-left px-4 py-3 text-sm font-medium">No. of Wind Mills</th>
-                        <th className="text-left px-4 py-3 text-sm font-medium">Rated Capacity</th>
-                        <th className="text-left px-4 py-3 text-sm font-medium">Total MW</th>
-                        <th className="text-left px-4 py-3 text-sm font-medium">Make</th>
-                        <th className="text-left px-4 py-3 text-sm font-medium">Connected Substation</th>
-                        <th className="text-center px-4 py-3 text-sm font-medium">Action</th>
+                        <th className="text-left px-3 py-3 text-xs sm:text-sm font-medium whitespace-nowrap">Location</th>
+                        <th className="text-left px-3 py-3 text-xs sm:text-sm font-medium whitespace-nowrap">No. of Wind Mills</th>
+                        <th className="text-left px-3 py-3 text-xs sm:text-sm font-medium whitespace-nowrap">Rated Capacity</th>
+                        <th className="text-left px-3 py-3 text-xs sm:text-sm font-medium whitespace-nowrap">Total MW</th>
+                        <th className="text-left px-3 py-3 text-xs sm:text-sm font-medium whitespace-nowrap">Make</th>
+                        <th className="text-left px-3 py-3 text-xs sm:text-sm font-medium whitespace-nowrap">Connected Substation</th>
+                        <th className="text-center px-3 py-3 text-xs sm:text-sm font-medium">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#e5e7eb]">
                       {windRows.map((row) => (
                         <tr key={row.id}>
-                          <td className="px-4 py-3">
+                          <td className="px-3 py-2">
                             <input
                               type="text"
                               value={row.location}
                               onChange={(e) => updateWindRow(row.id, "location", e.target.value)}
-                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
+                              className="w-full min-w-[100px] px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
                               placeholder="Location"
                             />
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-3 py-2">
                             <input
                               type="text"
                               value={row.noOfWindMills}
                               onChange={(e) => updateWindRow(row.id, "noOfWindMills", e.target.value)}
-                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
+                              className="w-full min-w-[60px] px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
                               placeholder="No."
                             />
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-3 py-2">
                             <input
                               type="text"
                               value={row.ratedCapacity}
                               onChange={(e) => updateWindRow(row.id, "ratedCapacity", e.target.value)}
-                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
+                              className="w-full min-w-[80px] px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
                               placeholder="Capacity"
                             />
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-3 py-2">
                             <input
                               type="text"
                               value={row.totalMW}
                               onChange={(e) => updateWindRow(row.id, "totalMW", e.target.value)}
-                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
+                              className="w-full min-w-[60px] px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
                               placeholder="MW"
                             />
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-3 py-2">
                             <input
                               type="text"
                               value={row.make}
                               onChange={(e) => updateWindRow(row.id, "make", e.target.value)}
-                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
+                              className="w-full min-w-[80px] px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
                               placeholder="Make"
                             />
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-3 py-2">
                             <input
                               type="text"
                               value={row.connectedSubstation}
                               onChange={(e) => updateWindRow(row.id, "connectedSubstation", e.target.value)}
-                              className="w-full px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
+                              className="w-full min-w-[100px] px-2 py-1 border border-[#e5e7eb] rounded outline-none text-sm"
                               placeholder="Substation"
                             />
                           </td>
-                          <td className="px-4 py-3 text-center">
+                          <td className="px-3 py-2 text-center">
                             <button
                               onClick={() => removeWindRow(row.id)}
                               disabled={windRows.length === 1}
@@ -467,6 +606,8 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
                 <Label>Chairman / MD Details</Label>
                 <input
                   type="text"
+                  name="chairmanMD"
+                  autoComplete="off"
                   value={formData.chairmanMD}
                   onChange={(e) => setFormData({ ...formData, chairmanMD: e.target.value })}
                   className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
@@ -478,9 +619,11 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
                   <Label>Name <span className="text-[#FB2C36]">*</span></Label>
                   <input
                     type="text"
-                    value={formData.repName}
+                    name="addRepName"
+                    autoComplete="off"
+                    value={formData.addRepName}
                     placeholder="Enter name"
-                    onChange={(e) => setFormData({ ...formData, repName: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, addRepName: e.target.value })}
                     className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                   />
                 </div>
@@ -488,41 +631,46 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
                   <Label>Designation <span className="text-[#FB2C36]">*</span></Label>
                   <input
                     type="text"
-                    value={formData.repDesignation}
+                    name="addRepDesignation"
+                    autoComplete="off"
+                    value={formData.addRepDesignation}
                     placeholder="Enter designation"
-                    onChange={(e) => setFormData({ ...formData, repDesignation: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, addRepDesignation: e.target.value })}
                     className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
                   />
                 </div>
                 <div>
                   <Label>Office Phone</Label>
-                  <input
-                    type="tel"
-                    value={formData.repOfficePhone}
-                    placeholder="+91 XXXXX XXXXX"
-                    onChange={(e) => setFormData({ ...formData, repOfficePhone: e.target.value })}
-                    className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
+                  <PhoneInput
+                    name="addRepOfficePhone"
+                    value={formData.addRepOfficePhone}
+                    onChange={(v) => handlePhoneChange("addRepOfficePhone", v)}
+                    hasError={!!errors.addRepOfficePhone}
                   />
+                  {errors.addRepOfficePhone && <p className="text-xs text-[#FB2C36] mt-1">{errors.addRepOfficePhone}</p>}
                 </div>
                 <div>
                   <Label>Mobile <span className="text-[#FB2C36]">*</span></Label>
-                  <input
-                    type="tel"
-                    value={formData.repMobile}
-                    placeholder="+91 XXXXX XXXXX"
-                    onChange={(e) => setFormData({ ...formData, repMobile: e.target.value })}
-                    className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
+                  <PhoneInput
+                    name="addRepMobile"
+                    value={formData.addRepMobile}
+                    onChange={(v) => handlePhoneChange("addRepMobile", v)}
+                    hasError={!!errors.addRepMobile}
                   />
+                  {errors.addRepMobile && <p className="text-xs text-[#FB2C36] mt-1">{errors.addRepMobile}</p>}
                 </div>
                 <div className="md:col-span-2">
                   <Label>Email <span className="text-[#FB2C36]">*</span></Label>
                   <input
                     type="email"
-                    value={formData.repEmail}
-                    onChange={(e) => setFormData({ ...formData, repEmail: e.target.value })}
-                    className="w-full px-3 py-2 border border-[#e5e7eb] rounded-lg outline-none"
+                    name="addRepEmail"
+                    autoComplete="off"
+                    value={formData.addRepEmail}
+                    onChange={(e) => handleEmailChange("addRepEmail", e.target.value)}
+                    className={`w-full px-3 py-2 border rounded-lg outline-none ${errors.addRepEmail ? "border-[#FB2C36]" : "border-[#e5e7eb]"}`}
                     placeholder="email@example.com"
                   />
+                  {errors.addRepEmail && <p className="text-xs text-[#FB2C36] mt-1">{errors.addRepEmail}</p>}
                 </div>
               </div>
               <div>
@@ -543,7 +691,7 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 px-8 py-6 border-t border-[#e5e7eb] bg-[#f9fafb]">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 px-4 sm:px-8 py-4 sm:py-6 border-t border-[#e5e7eb] bg-[#f9fafb]">
           <button
             onClick={onClose}
             className="px-6 py-2.5 border border-[#e5e7eb] text-[#242424] rounded-lg hover:bg-white transition-colors font-medium cursor-pointer"
@@ -558,9 +706,10 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
           </button>
           <button
             onClick={handleSubmit}
-            className="px-6 py-2.5 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] transition-colors font-medium cursor-pointer"
+            disabled={loading}
+            className="px-6 py-2.5 bg-[#1F7A4D] text-white rounded-lg hover:bg-[#176939] transition-colors font-medium cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Submit
+            {loading ? "Submitting..." : "Submit"}
           </button>
         </div>
       </div>

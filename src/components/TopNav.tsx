@@ -19,7 +19,7 @@ const sectionTitles: Record<string, string> = {
   subscriptionsmember: "Subscriptions",
   noticeBoard: "Notice Board",
   noticeBoardmember: "Notice Board",
-  myDocuments: "My Documents",
+  myDocuments: "Documents",
   myDocumentsmember: "My Documents",
   formPortal: "Form Portal",
   publications: "Publications",

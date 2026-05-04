@@ -5,6 +5,11 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}",
     "./index.html",
   ],
+  safelist: [
+    "hidden",
+    "sm:hidden",
+    "sm:inline",
+  ],
   theme: {
     extend: {
       fontFamily: {

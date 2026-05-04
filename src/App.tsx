@@ -6,7 +6,6 @@ import { TopNav } from "./components/TopNav";
 import  Dashboard  from "./components/Dashboard";
 import DashboardMember from "./components/DashboardMember";
 import CategoryManager from "./components/RolesPage";
-import SportsManagement from "./components/MemberDatabase";
 import Subscriptions from "./components/Subscriptions";
 import NoticeBoard from "./components/NoticeBoard";
 import NoticeBoardMember from "./components/NoticeBoardMember";
@@ -14,6 +13,7 @@ import MyDocuments from "./components/MyDocuments";
 import FormPortal from "./components/FormPortal";
 import Publications from "./components/Publication";
 import AdBooking from "./components/AdBooking";
+import AdBookingMember from "./components/AdBookingMember";
 import Reporting from "./components/Reporting";
 import Accounting from "./components/Accounting";
 import TeamChat from "./components/TeamChat";
@@ -26,6 +26,10 @@ import SubscriptionMemberPage from "./components/SubscriptionsMember";
 import PublicationsMember from "./components/PublicationMember";
 import MyDocumentsMember from "./components/MyDocumentsMember";
 import HelpDeskMember from "./components/HelpDeskMember";
+import CompanyProfiles from "./components/CompanyProfiles";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import MemberDatabase from "./components/MemberDatabase";
 
 
 export default function App() {
@@ -90,9 +94,19 @@ export default function App() {
       }
     };
 
+    const handleCustomNav = (e: Event) => {
+      const section = (e as CustomEvent).detail;
+      setActiveSection(section);
+      localStorage.setItem('activeSection', section);
+    };
+
     handleNavigation();
     window.addEventListener('popstate', handleNavigation);
-    return () => window.removeEventListener('popstate', handleNavigation);
+    window.addEventListener('navigate', handleCustomNav);
+    return () => {
+      window.removeEventListener('popstate', handleNavigation);
+      window.removeEventListener('navigate', handleCustomNav);
+    };
   }, []);
 
   const handleLogin = (type: 'admin' | 'member') => {
@@ -143,7 +157,7 @@ export default function App() {
       case "dashboard": return <Dashboard />;
       case "dashboardmember": return <DashboardMember />;
       case "rolespage": return <CategoryManager />;
-      case "sports": return <SportsManagement />;
+      case "memberDatabase": return <MemberDatabase />;
       case "subscriptions": return <Subscriptions />;
       case "subscriptionsmember": return <SubscriptionMemberPage />;
       case "noticeBoard": return <NoticeBoard />;
@@ -156,6 +170,8 @@ export default function App() {
       case "events": return <Events />;
       case "eventsmember": return <EventsMemberPage />;
       case "adBooking": return <AdBooking />;
+      case "adBookingmember": return <AdBookingMember />;
+      case "companyProfiles": return <CompanyProfiles userType={userType} />;
       case "reporting": return <Reporting />;
       case "accounting": return <Accounting />;
       case "teamChat": return <TeamChat />;
@@ -184,6 +200,7 @@ export default function App() {
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
+      <ToastContainer position="top-right" autoClose={3000} />
       {/* Mobile Overlay */}
       {isMobile && sidebarOpen && (
         <div
