@@ -23,6 +23,7 @@ import {
   Loader2,
   Calculator,
   FolderOpen,
+  KeyRound,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '../utils/api';
@@ -188,6 +189,22 @@ export default function RolesPermissions() {
   const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; id: string | null; title: string }>
     ({ show: false, id: null, title: '' });
   const [deleting, setDeleting] = useState(false);
+  const [resettingId, setResettingId] = useState<string | null>(null);
+
+  const CATEGORIES_WITH_LOGIN = ['national_council', 'general', 'vendors'];
+
+  const handleResetPassword = async (roleId: string, roleTitle: string) => {
+    if (!confirm(`Reset login password for "${roleTitle}"? A new password will be sent to their email.`)) return;
+    setResettingId(roleId);
+    try {
+      const { data } = await api.post(`/api/v1/roles/reset-password/${roleId}`);
+      toast.success(data.message || 'Password reset and sent successfully');
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Failed to reset password');
+    } finally {
+      setResettingId(null);
+    }
+  };
 
   // Returns smart permission defaults based on category
   const defaultPermissions = (category: RoleCategory) => ({
@@ -502,11 +519,23 @@ export default function RolesPermissions() {
                       }`}>
                       <div className="flex items-start justify-between mb-1">
                         <h3 className="font-medium text-[#242424] text-sm">{role.title}</h3>
-                        <span
-                          onClick={(e) => { e.stopPropagation(); setDeleteConfirm({ show: true, id: role._id, title: role.title }); }}
-                          className="p-1 hover:bg-red-50 rounded text-[#FB2C36] transition-colors cursor-pointer">
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </span>
+                        <div className="flex items-center gap-1">
+                          {CATEGORIES_WITH_LOGIN.includes(role.category) && (
+                            <span
+                              onClick={(e) => { e.stopPropagation(); handleResetPassword(role._id, role.title); }}
+                              title="Reset login password"
+                              className="p-1 hover:bg-blue-50 rounded text-[#155DFC] transition-colors cursor-pointer">
+                              {resettingId === role._id
+                                ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                : <KeyRound className="w-3.5 h-3.5" />}
+                            </span>
+                          )}
+                          <span
+                            onClick={(e) => { e.stopPropagation(); setDeleteConfirm({ show: true, id: role._id, title: role.title }); }}
+                            className="p-1 hover:bg-red-50 rounded text-[#FB2C36] transition-colors cursor-pointer">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </span>
+                        </div>
                       </div>
                       <p className="text-xs text-[#6A7282] mb-2">{role.designation}</p>
                       <div className="flex items-center gap-2 flex-wrap">

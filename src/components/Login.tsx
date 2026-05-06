@@ -52,7 +52,16 @@ export function Login({ onLogin, onShowSignup }: LoginProps) {
       let roleRes: any = null;
       try {
         roleRes = await api.post("/api/v1/roles/login", { email: email.trim().toLowerCase(), password });
-      } catch { /* not a role account */ }
+      } catch (roleErr: any) {
+        const status = roleErr?.response?.status;
+        if (status === 401) {
+          // Role account found but wrong password — stop here, show error
+          setError(roleErr?.response?.data?.message || "Invalid password");
+          setLoading(false);
+          return;
+        }
+        // 404 = not a role account at all — fall through to member login
+      }
 
       if (roleRes?.data?.token) {
         const token = roleRes.data.token;
@@ -92,7 +101,6 @@ export function Login({ onLogin, onShowSignup }: LoginProps) {
         designation: member.repDesignation || "",
         mobile: member.repMobile || member.contact?.mobile1 || "",
         state: member.state || "",
-        roleCategory: "general",
       }));
       onLogin('member');
     } catch (err: any) {
