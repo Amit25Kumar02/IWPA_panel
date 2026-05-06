@@ -620,7 +620,7 @@ function EventModal({
                     {/* ── Date, Time & Location ── */}
                     <section className="grid gap-3">
                         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Date, Time & Location</p>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div className="grid gap-1.5">
                                 <Label>Date <span className="text-destructive">*</span></Label>
                                 <Popover open={calOpen} onOpenChange={setCalOpen}>
@@ -642,7 +642,27 @@ function EventModal({
                             </div>
                             <div className="grid gap-1.5">
                                 <Label>Time</Label>
-                                <Input placeholder="e.g. 09:00 AM – 05:00 PM" value={form.time} onChange={field("time")} />
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="time"
+                                        value={form.time?.split(" to ")[0] || ""}
+                                        onChange={e => {
+                                            const end = form.time?.split(" to ")[1] || "";
+                                            setForm(f => ({ ...f, time: e.target.value + (end ? " to " + end : "") }));
+                                        }}
+                                        className="flex-1 min-w-0 px-3 py-2 border border-border rounded-md text-sm bg-input-background outline-none"
+                                    />
+                                    <span className="text-xs text-muted-foreground shrink-0">to</span>
+                                    <input
+                                        type="time"
+                                        value={form.time?.split(" to ")[1] || ""}
+                                        onChange={e => {
+                                            const start = form.time?.split(" to ")[0] || "";
+                                            setForm(f => ({ ...f, time: (start ? start + " to " : "") + e.target.value }));
+                                        }}
+                                        className="flex-1 min-w-0 px-3 py-2 border border-border rounded-md text-sm bg-input-background outline-none"
+                                    />
+                                </div>
                             </div>
                             <div className="grid gap-1.5">
                                 <Label>Location <span className="text-destructive">*</span></Label>
@@ -660,7 +680,7 @@ function EventModal({
                     {/* ── Registration ── */}
                     <section className="grid gap-3">
                         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Registration</p>
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div className="grid gap-1.5">
                                 <Label>Attendees</Label>
                                 <Input placeholder="e.g. 500 Expected" value={form.attendees} onChange={field("attendees")} />
@@ -739,9 +759,13 @@ function EventModal({
                         ) : (
                             <div className="grid gap-2">
                                 {form.agenda.map((a, i) => (
-                                    <div key={i} className="grid grid-cols-[90px_1fr_1fr_32px] gap-2 items-center bg-input-background rounded-lg px-3 py-2">
-                                        <Input placeholder="Time" value={a.time} className="h-8 text-sm"
-                                            onChange={e => updateAgenda(i, "time", e.target.value)} />
+                                    <div key={i} className="grid grid-cols-1 sm:grid-cols-[90px_1fr_1fr_32px] gap-2 items-center bg-input-background rounded-lg px-3 py-2">
+                                        <input
+                                            type="time"
+                                            value={a.time}
+                                            onChange={e => updateAgenda(i, "time", e.target.value)}
+                                            className="w-full px-2 py-1.5 border border-border rounded-md text-sm bg-background outline-none"
+                                        />
                                         <Input placeholder="Description" value={a.description} className="h-8 text-sm"
                                             onChange={e => updateAgenda(i, "description", e.target.value)} />
                                         <Input placeholder="Speaker" value={a.speaker ?? ""} className="h-8 text-sm"
