@@ -46,6 +46,26 @@ export function Login({ onLogin, onShowSignup }: LoginProps) {
       return;
     }
 
+    // Member hardcoded login
+    if (email === "iwpamember@gmail.com" && password === "iwpa@123") {
+      localStorage.setItem("token", "dummy-token-member");
+      localStorage.setItem("userType", "member");
+      localStorage.setItem("user", JSON.stringify({ name: "IWPA Member", email }));
+      setLoading(false);
+      onLogin('member');
+      return;
+    }
+
+    // Member hardcoded login
+    if (email === "iwpamember@gmail.com" && password === "iwpa@123") {
+      localStorage.setItem("token", "dummy-token-member");
+      localStorage.setItem("userType", "member");
+      localStorage.setItem("user", JSON.stringify({ name: "IWPA Member", email }));
+      setLoading(false);
+      onLogin('member');
+      return;
+    }
+
     // Member login via API
     try {
       // Try role login first
