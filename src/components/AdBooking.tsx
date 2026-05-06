@@ -142,6 +142,12 @@ export default function AdBooking() {
         }
     };
 
+    const now = new Date();
+    const activeCount = ads.filter(a => {
+        const start = new Date(a.startDate);
+        const end = new Date(a.endDate);
+        return now >= start && now <= end;
+    }).length;
     const totalRevenue = ads.reduce((sum, a) => sum + (a.amount || 0), 0);
     const totalImpressions = ads.reduce((sum, a) => sum + (a.impressions || 0), 0);
     const pendingCount = ads.filter(a => a.status === "Pending").length;
@@ -153,7 +159,7 @@ export default function AdBooking() {
 
     const stats = [
         { label: "Total Bookings", value: ads.length.toString(), icon: Megaphone, color: "#1F7A4D", bg: "#d0fae5" },
-        { label: "Active Ads", value: ads.filter(a => a.status === "Active").length.toString(), icon: TrendingUp, color: "#155DFC", bg: "#dbeafe" },
+        { label: "Active Ads", value: activeCount.toString(), icon: TrendingUp, color: "#155DFC", bg: "#dbeafe" },
         { label: "Total Impressions", value: totalImpressions > 1000 ? `${(totalImpressions / 1000).toFixed(1)}K` : totalImpressions.toString(), icon: MousePointerClick, color: "#a855f7", bg: "#f3e8ff" },
         { label: "Total Revenue", value: `₹${(totalRevenue / 1000).toFixed(1)}K`, icon: DollarSign, color: "#f59e0b", bg: "#fef3c7" },
     ];

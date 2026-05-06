@@ -32,7 +32,7 @@ interface SidebarProps {
   isMobile?: boolean;
   onClose?: () => void;
   onLogout?: () => void;
-  userType?: 'admin' | 'member';
+  userType?: 'admin' | 'member' | 'role';
 }
 
 export function Sidebar({
@@ -44,7 +44,7 @@ export function Sidebar({
   onLogout,
   userType = 'admin',
 }: SidebarProps) {
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [user, setUser] = useState<{ name: string; email: string; roleCategory?: string } | null>(null);
   const [showLogout, setShowLogout] = useState(false);
 
   useEffect(() => {
@@ -80,10 +80,37 @@ export function Sidebar({
     { id: "myDocumentsmember", label: "Documents", icon: FolderOpen },
     { id: "adBookingmember", label: "Ad Booking", icon: Megaphone },
     { id: "companyProfiles", label: "Company Profiles", icon: Users },
+    { id: "messages", label: "Messages", icon: MessageCircle },
     { id: "helpDeskmember", label: "Help Desk", icon: HelpCircle },
+    { id: "myprofile", label: "My Profile", icon: User },
   ];
 
-  const navItems = userType === 'admin' ? adminNavItems : memberNavItems;
+  const nationalCouncilNavItems = [
+    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { id: "noticeBoard", label: "Notice Board", icon: Bell },
+    { id: "events", label: "Events", icon: Calendar },
+    { id: "reporting", label: "Reports", icon: BarChart3 },
+    { id: "companyProfiles", label: "Company Profiles", icon: Users },
+    { id: "messages", label: "Messages", icon: MessageCircle },
+    { id: "email", label: "Email", icon: Mail },
+    { id: "helpDesk", label: "Help Desk", icon: HelpCircle },
+    { id: "myprofile", label: "My Profile", icon: User },
+  ];
+
+  const generalVendorNavItems = [
+    { id: "noticeBoard", label: "Notice Board", icon: Bell },
+    { id: "events", label: "Events", icon: Calendar },
+    { id: "companyProfiles", label: "Company Profiles", icon: Users },
+    { id: "messages", label: "Messages", icon: MessageCircle },
+    { id: "email", label: "Email", icon: Mail },
+    { id: "helpDesk", label: "Help Desk", icon: HelpCircle },
+    { id: "myprofile", label: "My Profile", icon: User },
+  ];
+
+  const getRoleNavItems = () =>
+    user?.roleCategory === 'national_council' ? nationalCouncilNavItems : generalVendorNavItems;
+
+  const navItems = userType === 'admin' ? adminNavItems : userType === 'role' ? getRoleNavItems() : memberNavItems;
 
   return (
     <aside

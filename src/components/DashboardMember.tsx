@@ -34,8 +34,24 @@ export default function DashboardMember() {
     const [events, setEvents] = useState<Event[]>([]);
     const [noticesLoading, setNoticesLoading] = useState(true);
     const [eventsLoading, setEventsLoading] = useState(true);
+    const [member, setMember] = useState<any>(null);
+
+    const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+    const storedUserType = localStorage.getItem("userType") || "member";
+    const displayName = storedUser.name || storedUser.companyName || "User";
+    const rawCategory = storedUser.roleCategory || "";
+    const roleLabel = storedUserType === "role" && rawCategory
+        ? rawCategory.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()) + " Portal"
+        : "Member Engagement Portal";
 
     useEffect(() => {
+        // fetch member data only for member userType
+        if (storedUserType === "member" && (storedUser._id || storedUser.id)) {
+            api.get(`/api/v1/members/get-member/${storedUser._id || storedUser.id}`)
+                .then(({ data }) => setMember(data?.data || null))
+                .catch(() => {});
+        }
+
         api.get("/api/v1/notices/get-notices")
             .then(({ data }) => {
                 const list: Notice[] = Array.isArray(data) ? data : (data?.data ?? data?.notices ?? []);
@@ -58,8 +74,8 @@ export default function DashboardMember() {
 
             {/* Banner */}
             <div className="rounded-xl px-6 py-6 min-h-38.75 bg-linear-to-b from-[#0B3C5D] to-[#1F7A4D] text-white flex flex-col gap-2 justify-center shadow-sm">
-                <h2 className="text-[28px] font-bold">Welcome back, Member User!</h2>
-                <p className="text-[17px]">Indian Wind Power Association - Member Engagement Portal</p>
+                <h2 className="text-[28px] font-bold">Welcome back, {displayName}!</h2>
+                <p className="text-[17px]">Indian Wind Power Association - {roleLabel}</p>
                 <p className="text-[13px] opacity-90">Stay updated with the latest policies, events, and industry developments</p>
                 {/* {(() => {
                     const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -72,10 +88,54 @@ export default function DashboardMember() {
             {/* Stats */}
             <h2 className="text-[19px] font-semibold text-[#242424]">Subscription Payment History</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                <Stat title="My Subscriptions" value="₹12,000" growth="Year" icon={<FileText />} color="#1F7A4D" bg="#D0FAE5" />
-                <Stat title="Payment Due" value="₹10,000" growth="This month" icon={<AlertCircle />} color="#F59E0B" bg="#FEF3C7" />
-                <Stat title="Last Paid" value="01 April 2025" growth="Paid" icon={<CalendarDays />} color="#2563EB" bg="#DBEAFE" />
-                <Stat title="Date of Expiry" value="31 March 2027" growth="4 months left" icon={<Users />} color="#9333EA" bg="#F3E8FF" />
+                {(() => {
+                    const m = member;
+                    const netReceivable = m?.billing?.netReceivable ?? null;
+                    const totalReceived = m?.payment?.totalReceived ?? null;
+                    const due = netReceivable != null && totalReceived != null
+                        ? Math.max(0, netReceivable - totalReceived)
+                        : null;
+                    const receiptDate = m?.payment?.receiptDate
+                        ? new Date(m.payment.receiptDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })
+                        : null;
+                    const expiry = m?.certificateValidTill || m?.expiryDate;
+                    const expiryDate = expiry ? new Date(expiry) : null;
+                    const expiryStr = expiryDate
+                        ? expiryDate.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })
+                        : null;
+                    const monthsLeft = expiryDate
+                        ? Math.max(0, Math.round((expiryDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24 * 30)))
+                        : null;
+
+                    return (
+                        <>
+                            <Stat
+                                title="My Subscription"
+                                value={netReceivable != null ? `₹${netReceivable.toLocaleString("en-IN")}` : "—"}
+                                growth="Current Year"
+                                icon={<FileText />} color="#1F7A4D" bg="#D0FAE5"
+                            />
+                            <Stat
+                                title="Payment Due"
+                                value={due != null ? (due === 0 ? "Nil" : `₹${due.toLocaleString("en-IN")}`) : "—"}
+                                growth={due === 0 ? "Fully Paid" : "Pending"}
+                                icon={<AlertCircle />} color="#F59E0B" bg="#FEF3C7"
+                            />
+                            <Stat
+                                title="Last Paid"
+                                value={receiptDate ?? (totalReceived != null ? `₹${totalReceived.toLocaleString("en-IN")}` : "—")}
+                                growth={totalReceived != null ? `₹${totalReceived.toLocaleString("en-IN")} received` : "No payment"}
+                                icon={<CalendarDays />} color="#2563EB" bg="#DBEAFE"
+                            />
+                            <Stat
+                                title="Date of Expiry"
+                                value={expiryStr ?? "—"}
+                                growth={monthsLeft != null ? (monthsLeft === 0 ? "Expired" : `${monthsLeft} month${monthsLeft !== 1 ? "s" : ""} left`) : "—"}
+                                icon={<Users />} color="#9333EA" bg="#F3E8FF"
+                            />
+                        </>
+                    );
+                })()}
             </div>
 
             {/* Notices + Events */}

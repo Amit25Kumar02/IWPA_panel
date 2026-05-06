@@ -87,13 +87,14 @@ export default function AdBookingMember() {
 
     // get logged-in member info
     const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+    const currentUserId: string = currentUser._id || "";
     const memberCompany: string = currentUser.companyName || currentUser.name || "";
     const memberEmail: string = currentUser.email || "";
 
     const fetchBookings = async () => {
         setLoading(true);
         try {
-            const res = await api.get("/api/v1/ad-bookings/get-all");
+            const res = await api.get(`/api/v1/ad-bookings/get-by-user/${currentUserId}`);
             setBookings(Array.isArray(res.data?.data) ? res.data.data : []);
         } catch {
             toast.error("Failed to load bookings");
@@ -128,6 +129,7 @@ export default function AdBookingMember() {
         setSaving(true);
         try {
             const payload: Record<string, unknown> = {
+                userId: currentUserId,
                 company: form.company.trim(),
                 adType: AD_TYPE_MAP[activeTab],
                 notes: form.notes.trim(),

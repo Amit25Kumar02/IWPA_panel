@@ -45,6 +45,11 @@ export default function HelpDeskMember() {
     const [selectedTicket, setSelectedTicket] = useState<TicketDetail | null>(null);
     const [detailLoading, setDetailLoading] = useState(false);
 
+    const currentUserId: string = (() => {
+        try { return JSON.parse(localStorage.getItem("user") ?? "{}")._id ?? ""; }
+        catch { return ""; }
+    })();
+
     const [form, setForm] = useState({ subject: "", category: "", description: "" });
     const [formFiles, setFormFiles] = useState<File[]>([]);
     const [submitting, setSubmitting] = useState(false);
@@ -103,7 +108,7 @@ export default function HelpDeskMember() {
     async function fetchTickets() {
         setLoading(true);
         try {
-            const { data } = await api.get("/api/v1/tickets/get-tickets");
+            const { data } = await api.get(`/api/v1/tickets/get-tickets-by-user/${currentUserId}`);
             setTickets(Array.isArray(data) ? data : []);
         } catch { setTickets([]); }
         finally { setLoading(false); }
@@ -126,6 +131,7 @@ export default function HelpDeskMember() {
         fd.append("subject", form.subject);
         fd.append("category", form.category);
         fd.append("description", form.description);
+        fd.append("userId", currentUserId);
         formFiles.forEach(f => fd.append("files", f));
         try {
             await api.post("/api/v1/tickets/create-ticket", fd, { headers: { "Content-Type": "multipart/form-data" } });

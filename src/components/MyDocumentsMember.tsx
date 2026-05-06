@@ -77,19 +77,19 @@ export default function MyDocumentsMember() {
     setDownloadPicker(null);
   };
 
-  const currentMembershipId: string = (() => {
-    try { return JSON.parse(localStorage.getItem("user") ?? "{}")?.membershipId ?? ""; }
+  const currentUserId: string = (() => {
+    try { return JSON.parse(localStorage.getItem("user") ?? "{}")._id ?? ""; }
     catch { return ""; }
   })();
 
   useEffect(() => {
-    if (currentMembershipId) fetchDocuments();
+    if (currentUserId) fetchDocuments();
   }, []); // eslint-disable-line
 
   const fetchDocuments = async () => {
     setLoading(true);
     try {
-      const { data } = await api.get(`/api/v1/member/documents/get-documents/${currentMembershipId}`);
+      const { data } = await api.get(`/api/v1/member/documents/get-documents-by-user/${currentUserId}`);
       const list = Array.isArray(data) ? data : (data?.data ?? data?.documents ?? data?.result ?? []);
       setDocuments(list);
     } catch {
@@ -102,11 +102,11 @@ export default function MyDocumentsMember() {
   const handleAddDocument = async () => {
     if (!addForm.type.trim() || !addForm.documentNumber.trim() || !addForm.date) return;
     if (!addFiles.length) { toast.error("Please select at least one file"); return; }
-    if (!currentMembershipId) { toast.error("Membership ID not found. Please log in again."); return; }
+    if (!currentUserId) { toast.error("User ID not found. Please log in again."); return; }
     setSaving(true);
     try {
       const fd = new FormData();
-      Object.entries({ ...addForm, membershipId: currentMembershipId, version: 1 }).forEach(([k, v]) => fd.append(k, String(v)));
+      Object.entries({ ...addForm, userId: currentUserId, version: 1 }).forEach(([k, v]) => fd.append(k, String(v)));
       addFiles.forEach(f => fd.append("files", f));
       const { data } = await api.post("/api/v1/member/documents/create-document", fd);
       const created = data?.data ?? data?.document ?? data;
@@ -126,7 +126,7 @@ export default function MyDocumentsMember() {
     if (!deleteConfirmation.documentId) return;
     setDeleting(true);
     try {
-      await api.delete(`/api/v1/member/documents/delete-document/${deleteConfirmation.documentId}?membershipId=${currentMembershipId}`);
+      await api.delete(`/api/v1/member/documents/delete-document/${deleteConfirmation.documentId}?userId=${currentUserId}`);
       setDocuments(prev => prev.filter(d => d._id !== deleteConfirmation.documentId));
       toast.success("Document deleted successfully");
       setDeleteConfirmation({ show: false, documentId: null, documentName: "" });
@@ -269,7 +269,7 @@ export default function MyDocumentsMember() {
                           className="p-2 rounded-md hover:bg-[#ECFDF5] text-[#1F7A4D] disabled:opacity-40 cursor-pointer" title="Download">
                           <Download size={16} />
                         </button>
-                        {doc.membershipId === currentMembershipId && (
+                        {doc.membershipId === currentUserId && (
                           <button onClick={() => setDeleteConfirmation({ show: true, documentId: doc._id, documentName: doc.documentNumber })}
                             className="p-2 rounded-md hover:bg-red-50 text-[#FB2C36] cursor-pointer" title="Delete">
                             <Trash2 size={16} />

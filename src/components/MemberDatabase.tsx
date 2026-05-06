@@ -205,12 +205,22 @@ export default function MemberDatabase() {
     setCurrentPage(1);
   };
 
+  const getMemberStatus = (m: Member) => {
+    if (m.status === "Active" || m.status === "Expired" || m.status === "Pending Renewal") return m.status;
+    const expiry = m.certificateValidTill || m.expiryDate;
+    if (!expiry) return "Active";
+    const diff = (new Date(expiry).getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+    if (diff < 0) return "Expired";
+    if (diff <= 90) return "Pending Renewal";
+    return "Active";
+  };
+
   const filteredMembers = members.filter((member) => {
     const matchesSearch =
       member.companyName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.membershipId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.repName?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || member.status === statusFilter;
+    const matchesStatus = statusFilter === "all" || getMemberStatus(member) === statusFilter;
     const matchesType = typeFilter === "all" || member.memberCategory === typeFilter;
     const matchesState = stateFilter === "all" || member.state === stateFilter;
     const matchesTab = member.memberCategory === activeTab;
@@ -245,9 +255,9 @@ export default function MemberDatabase() {
 
   const stats = [
     { label: "Total Members", value: members.length, color: "#1F7A4D", bgColor: "#d0fae5" },
-    { label: "Active Members", value: members.filter(m => m.status === "Active").length, color: "#155DFC", bgColor: "#dbeafe" },
-    { label: "Pending Renewal", value: members.filter(m => m.status === "Pending Renewal").length, color: "#f59e0b", bgColor: "#fef3c7" },
-    { label: "Expired", value: members.filter(m => m.status === "Expired").length, color: "#dc2626", bgColor: "#fee2e2" },
+    { label: "Active Members", value: members.filter(m => getMemberStatus(m) === "Active").length, color: "#155DFC", bgColor: "#dbeafe" },
+    { label: "Pending Renewal", value: members.filter(m => getMemberStatus(m) === "Pending Renewal").length, color: "#f59e0b", bgColor: "#fef3c7" },
+    { label: "Expired", value: members.filter(m => getMemberStatus(m) === "Expired").length, color: "#dc2626", bgColor: "#fee2e2" },
   ];
 
   return (
@@ -399,7 +409,7 @@ export default function MemberDatabase() {
                     <tr><td colSpan={12} className="px-6 py-10 text-center text-[#6a7282] text-sm">No members found</td></tr>
                   ) : (
                     pagedMembers.map((member) => {
-                      const statusStyle = getStatusStyle(member.status);
+                      const statusStyle = getStatusStyle(getMemberStatus(member));
                       return (
                         <tr key={member._id} className="hover:bg-[#f9fafb] transition-colors">
                           <td className="px-6 py-4 text-sm text-[#6a7282]">{member.srNo ?? "-"}</td>
@@ -441,7 +451,7 @@ export default function MemberDatabase() {
                           <td className="px-6 py-4">
                             <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium"
                               style={{ backgroundColor: statusStyle.bg, color: statusStyle.text }}>
-                              {member.status || "Unknown"}
+                              {getMemberStatus(member)}
                             </span>
                           </td>
                           <td className="px-6 py-4 text-sm text-[#6a7282]">

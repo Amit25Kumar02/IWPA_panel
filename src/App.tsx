@@ -30,6 +30,7 @@ import CompanyProfiles from "./components/CompanyProfiles";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import MemberDatabase from "./components/MemberDatabase";
+import MyProfile from "./components/MyProfile";
 
 
 export default function App() {
@@ -37,8 +38,8 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return localStorage.getItem('isAuthenticated') === 'true';
   });
-  const [userType, setUserType] = useState<'admin' | 'member'>(() => {
-    return (localStorage.getItem('userType') as 'admin' | 'member') || 'admin';
+  const [userType, setUserType] = useState<'admin' | 'member' | 'role'>(() => {
+    return (localStorage.getItem('userType') as 'admin' | 'member' | 'role') || 'admin';
   });
 
   // Set theme based on authentication status
@@ -56,7 +57,15 @@ export default function App() {
     }
   }, [isAuthenticated]);
   const [activeSection, setActiveSection] = useState(() => {
-    return localStorage.getItem('activeSection') || 'dashboard';
+    const saved = localStorage.getItem('activeSection');
+    if (saved) return saved;
+    const type = localStorage.getItem('userType') || 'admin';
+    if (type === 'member') return 'dashboardmember';
+    if (type === 'role') {
+      const u = JSON.parse(localStorage.getItem('user') || '{}');
+      return u?.roleCategory === 'national_council' ? 'dashboard' : 'noticeBoard';
+    }
+    return 'dashboard';
   });
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
@@ -109,14 +118,18 @@ export default function App() {
     };
   }, []);
 
-  const handleLogin = (type: 'admin' | 'member') => {
+  const handleLogin = (type: 'admin' | 'member' | 'role') => {
     setIsAuthenticated(true);
-    setUserType(type);
+    setUserType(type as any);
     localStorage.setItem('isAuthenticated', 'true');
     localStorage.setItem('userType', type);
-    
-    // Set initial section based on user type
-    const initialSection = type === 'member' ? 'dashboardmember' : 'dashboard';
+
+    const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const roleCategory = storedUser?.roleCategory || '';
+    const initialSection =
+      type === 'member' ? 'dashboardmember' :
+      type === 'role' ? (roleCategory === 'national_council' ? 'dashboard' : 'noticeBoard') :
+      'dashboard';
     setActiveSection(initialSection);
     localStorage.setItem('activeSection', initialSection);
   };
@@ -132,7 +145,7 @@ export default function App() {
   };
 
   const handleToggleSidebar = () => {
-    setSidebarOpen((prev) => {
+    setSidebarOpen((prev:any) => {
       const newState = !prev;
       localStorage.setItem('sidebarOpen', JSON.stringify(newState));
       return newState;
@@ -152,8 +165,14 @@ export default function App() {
     if (userType === 'member' && activeSection === 'dashboard') {
       return <DashboardMember />;
     }
+
+    // For role users, show admin Dashboard
+    if (userType === 'role' && activeSection === 'dashboard') {
+      return <Dashboard />;
+    }
     
     switch (activeSection) {
+      case "myprofile": return <MyProfile />;
       case "dashboard": return <Dashboard />;
       case "dashboardmember": return <DashboardMember />;
       case "rolespage": return <CategoryManager />;
@@ -171,15 +190,15 @@ export default function App() {
       case "eventsmember": return <EventsMemberPage />;
       case "adBooking": return <AdBooking />;
       case "adBookingmember": return <AdBookingMember />;
-      case "companyProfiles": return <CompanyProfiles userType={userType} />;
-      case "reporting": return <Reporting />;
+      case "companyProfiles": return <CompanyProfiles userType={userType === 'member' ? 'member' : 'admin'} />;
+      case "reporting": return userType === 'admin' || userType === 'role' ? <Reporting /> : <DashboardMember />;
       case "accounting": return <Accounting />;
       case "teamChat": return <TeamChat />;
       case "email": return <Email />;
-      case "messages": return <Messages />;
+      case "messages": return <Messages userType={userType} />;
       case "helpDesk": return <HelpDesk />;
       case "helpDeskmember": return <HelpDeskMember />;
-      default: return userType === 'member' ? <DashboardMember /> : <Dashboard />;
+      default: return userType === 'member' || userType === 'role' ? <DashboardMember /> : <Dashboard />;
     }
   };
 
@@ -225,7 +244,7 @@ export default function App() {
         onClose={handleCloseSidebar}
         isMobile={isMobile}
         onLogout={handleLogout}
-        userType={userType}
+        userType={userType as 'admin' | 'member' | 'role'}
       />
 
       <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarOpen && !isMobile ? "ml-64" : "ml-0"

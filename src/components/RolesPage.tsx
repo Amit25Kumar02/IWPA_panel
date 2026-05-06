@@ -36,6 +36,36 @@ import { Separator } from './ui/separator';
 import { ScrollArea } from './ui/scroll-area';
 import './RolesPage.css';
 
+function PhoneInput({
+  value, onChange, placeholder, hasError,
+}: {
+  value: string; onChange: (v: string) => void; placeholder?: string; hasError?: boolean;
+}) {
+  const [countryCode, setCountryCode] = useState('+91');
+  return (
+    <div className={`flex border rounded-lg overflow-hidden ${hasError ? 'border-[#FB2C36]' : 'border-[#e5e7eb]'}`}>
+      <input
+        type="text"
+        value={countryCode}
+        onChange={(e) => {
+          const val = e.target.value;
+          if (/^\+?\d{0,4}$/.test(val)) setCountryCode(val.startsWith('+') ? val : '+' + val.replace(/\+/g, ''));
+        }}
+        className="w-14 px-2 py-2 bg-[#F9FAFB] border-r border-[#e5e7eb] text-sm outline-none text-center"
+        maxLength={5}
+      />
+      <input
+        type="tel"
+        value={value}
+        onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 10))}
+        placeholder={placeholder || 'XXXXXXXXXX'}
+        maxLength={10}
+        className="flex-1 px-3 py-2 outline-none text-sm bg-[#F9FAFB]"
+      />
+    </div>
+  );
+}
+
 // ===== UI Theme Configuration =====
 const theme = {
   colors: {
@@ -69,7 +99,7 @@ const theme = {
   getCategoryById: (id: string) => theme.categories.find(c => c.id === id)
 };
 
-// =================================
+
 
 type RoleCategory = 'headquarters' | 'national_council' | 'state_council' | 'general' | 'vendors';
 
@@ -687,23 +717,19 @@ export default function RolesPermissions() {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="mobile">Mobile Number <span className="text-[#FB2C36]">*</span></Label>
-                          <Input
-                            id="mobile"
-                            value={formData.mobile}
-                            onChange={(e) => setFormData(prev => ({ ...prev, mobile: e.target.value }))}
-                            placeholder="+91 XXXXX XXXXX"
-                            className='bg-[#F9FAFB] border-[0.8px] border-[#000000]/0% rounded-lg'
+                          <PhoneInput
+                            value={formData.mobile ?? ''}
+                            onChange={(v) => setFormData(prev => ({ ...prev, mobile: v }))}
+                            placeholder="XXXXXXXXXX"
                           />
                         </div>
 
                         <div>
                           <Label htmlFor="landline">Landline</Label>
-                          <Input
-                            id="landline"
-                            value={formData.landline}
-                            onChange={(e) => setFormData(prev => ({ ...prev, landline: e.target.value }))}
+                          <PhoneInput
+                            value={formData.landline ?? ''}
+                            onChange={(v) => setFormData(prev => ({ ...prev, landline: v }))}
                             placeholder="Optional"
-                            className='bg-[#F9FAFB] border-[0.8px] border-[#000000]/0% rounded-lg'
                           />
                         </div>
                       </div>
@@ -764,7 +790,7 @@ export default function RolesPermissions() {
                     <div className="space-y-4">
 
                       {/* IWPA Directory */}
-                      <Card className="p-4" style={{ backgroundColor: '#F0FDF4', borderColor: '#A4F4CF' }}>
+                      {/* <Card className="p-4" style={{ backgroundColor: '#F0FDF4', borderColor: '#A4F4CF' }}>
                         <div className="flex items-center gap-2 mb-3">
                           <FolderOpen className="w-4 h-4 text-[#1F7A4D]" />
                           <span className="text-sm font-medium text-[#0D3D26]">IWPA Directory</span>
@@ -781,7 +807,7 @@ export default function RolesPermissions() {
                             </label>
                           ))}
                         </div>
-                      </Card>
+                      </Card> */}
 
                       <Card className="p-4" style={{ backgroundColor: '#EFF6FF', borderColor: '#BEDBFF' }}>
                         <div className="flex items-center gap-2 mb-3">
@@ -1062,7 +1088,7 @@ export default function RolesPermissions() {
                       </Card>
 
                       {/* Accounting — State Coordinators only */}
-                      <Card className="p-4" style={{ backgroundColor: '#FFFBEB', borderColor: '#FEE685' }}>
+                      {/* <Card className="p-4" style={{ backgroundColor: '#FFFBEB', borderColor: '#FEE685' }}>
                         <div className="flex items-center gap-2 mb-3">
                           <Calculator className="w-4 h-4 text-[#E17100]" />
                           <span className="text-sm font-medium text-[#7B3306]">Accounting</span>
@@ -1080,7 +1106,7 @@ export default function RolesPermissions() {
                           ))}
                         </div>
                         <p className="text-xs text-[#6A7282] mt-2">Edit allows feeding expenses, uploading bills, receipts & bank statements</p>
-                      </Card>
+                      </Card> */}
 
                     </div>
                   </div>

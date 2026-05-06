@@ -16,6 +16,14 @@ import api from "../utils/api";
 export default function Dashboard() {
   const [members, setMembers] = useState<any[]>([]);
 
+  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const userType = localStorage.getItem("userType") || "admin";
+  const displayName = storedUser.name || storedUser.companyName || "Admin User";
+  const roleCategory = storedUser.roleCategory || "";
+  const portalLabel = userType === "role" && roleCategory
+    ? roleCategory.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()) + " Portal"
+    : "IWPA Admin Portal";
+
   useEffect(() => {
     api.get("/api/v1/members/get-members")
       .then(res => setMembers(Array.isArray(res.data?.data) ? res.data.data : []))
@@ -39,10 +47,10 @@ export default function Dashboard() {
       {/* Welcome Banner */}
       <div className="bg-linear-to-r from-[#009966] to-[#009689] min-h-32 rounded-xl px-4 sm:px-6 py-4 sm:py-6 flex flex-col justify-center">
         <h2 className="text-xl sm:text-2xl lg:text-[28.44px] font-bold text-[#ffffff]">
-          Welcome back, Admin User!
+          Welcome back, {displayName}!
         </h2>
         <p className="text-sm sm:text-base lg:text-[17px] text-[#D0FAE5] mt-1">
-          Stay updated with the latest policies, events, and industry insights from IWPA
+          {portalLabel} — Stay updated with the latest policies, events, and industry insights from IWPA
         </p>
       </div>
 

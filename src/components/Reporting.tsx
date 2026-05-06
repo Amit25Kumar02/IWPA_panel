@@ -20,13 +20,7 @@ const PERIODS = [
   { value: "last-year", label: "Last Year" },
 ];
 
-const INDIAN_STATES = [
-  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat",
-  "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh",
-  "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
-  "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh",
-  "Uttarakhand", "West Bengal",
-];
+const INDIAN_STATES: string[] = [];
 
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string ?? "");
 
@@ -47,10 +41,12 @@ export default function Reporting() {
   const [generating, setGenerating] = useState(false);
   const [exporting, setExporting] = useState<"excel" | "pdf" | null>(null);
   const [reportHistory, setReportHistory] = useState<Record<string, ReportMeta>>({});
+  const [availableStates, setAvailableStates] = useState<string[]>([]);
 
   useEffect(() => {
     api.get("/api/v1/reports/stats").then((r) => setStats(r.data.data)).catch(() => {});
     api.get("/api/v1/reports/history").then((r) => setReportHistory(r.data.data)).catch(() => {});
+    api.get("/api/v1/reports/states").then((r) => setAvailableStates(r.data.data || [])).catch(() => {});
   }, []);
 
   const handleGenerate = async () => {
@@ -147,7 +143,7 @@ export default function Reporting() {
             <select value={stateFilter} onChange={(e) => setStateFilter(e.target.value)}
               className="w-full px-3 py-2.5 border border-[#e5e7eb] rounded-lg outline-none text-sm">
               <option value="all">All States</option>
-              {INDIAN_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+              {availableStates.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
           <div>
@@ -217,54 +213,7 @@ export default function Reporting() {
         </div>
       </div>
 
-      {/* Report Table — shown after Generate */}
-      {reportData && (
-        <div className="bg-white rounded-lg border border-[#e5e7eb] overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#e5e7eb] flex items-center justify-between gap-3">
-            <div>
-              <h2 className="text-lg font-semibold text-[#242424]">
-                {REPORT_TYPES.find((t) => t.value === reportData.type)?.label}
-              </h2>
-              <p className="text-xs text-[#6a7282] mt-0.5">{reportData.rows.length} records found</p>
-            </div>
-            {reportData.summary && (
-              <div className="text-right shrink-0">
-                {Object.entries(reportData.summary).map(([k, v]) => (
-                  <p key={k} className="text-sm font-semibold text-[#1F7A4D]">
-                    {colLabel(k)}: ₹{Number(v).toLocaleString()}
-                  </p>
-                ))}
-              </div>
-            )}
-          </div>
-          {reportData.rows.length === 0 ? (
-            <div className="p-8 text-center text-sm text-[#6a7282]">No records found for the selected filters.</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-[#f9fafb] border-b border-[#e5e7eb]">
-                    {reportData.columns.map((c) => (
-                      <th key={c} className="px-4 py-3 text-left text-xs font-semibold text-[#6a7282] whitespace-nowrap">{colLabel(c)}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#e5e7eb]">
-                  {reportData.rows.map((row, i) => (
-                    <tr key={i} className="hover:bg-[#f9fafb]">
-                      {reportData.columns.map((c) => (
-                        <td key={c} className="px-4 py-3 text-[#242424] whitespace-nowrap">
-                          {statusCols.has(c) ? statusBadge(String(row[c] ?? "-")) : String(row[c] ?? "-")}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      )}
+
     </div>
   );
 }

@@ -5,13 +5,25 @@ import { Lock, Mail, Eye, EyeOff } from "lucide-react";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+import api from "../utils/api";
 
 interface LoginProps {
-  onLogin: (userType: 'admin' | 'member') => void;
+  onLogin: (userType: 'admin' | 'member' | 'role') => void;
+  onShowSignup?: () => void;
 }
 
-export function Login({ onLogin }: LoginProps) {
+// Decode JWT payload (base64url)
+function decodeJWT(token: string): any {
+  try {
+    const payload = token.split(".")[1];
+    const decoded = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
+    return JSON.parse(decoded);
+  } catch {
+    return {};
+  }
+}
+
+export function Login({ onLogin, onShowSignup }: LoginProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -19,39 +31,76 @@ export function Login({ onLogin }: LoginProps) {
   const [error, setError] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    setTimeout(() => {
-      if (
-        email === "iwpa@gmail.com" &&
-        password === "iwpa@123"
-      ) {
-        localStorage.setItem("token", "dummy-token");
-        localStorage.setItem("userType", "admin");
-        localStorage.setItem(
-          "user",
-          JSON.stringify({ name: "Admin User", email })
-        );
-        onLogin('admin');
-      } else if (
-        email === "iwpamember@gmail.com" &&
-        password === "iwpa@123"
-      ) {
-        localStorage.setItem("token", "dummy-token");
-        localStorage.setItem("userType", "member");
-        localStorage.setItem(
-          "user",
-          JSON.stringify({ name: "Member User", email, membershipId: "MEM-2026-001", companyName: "Member Company" })
-        );
-        onLogin('member');
-      } else {
-        setError("Invalid email or password");
-      }
+    // Admin hardcoded login
+    if (email === "iwpa@gmail.com" && password === "iwpa@123") {
+      localStorage.setItem("token", "dummy-token");
+      localStorage.setItem("userType", "admin");
+      localStorage.setItem("user", JSON.stringify({ name: "Admin User", email }));
       setLoading(false);
-    }, 800);
+      onLogin('admin');
+      return;
+    }
+
+    // Member login via API
+    try {
+      // Try role login first
+      let roleRes: any = null;
+      try {
+        roleRes = await api.post("/api/v1/roles/login", { email: email.trim().toLowerCase(), password });
+      } catch { /* not a role account */ }
+
+      if (roleRes?.data?.token) {
+        const token = roleRes.data.token;
+        const role = roleRes.data.data;
+        localStorage.setItem("token", token);
+        localStorage.setItem("userType", "role");
+        localStorage.setItem("user", JSON.stringify({
+          _id: role._id,
+          name: role.title,
+          email: role.loginEmail || email,
+          roleCategory: role.category,
+          designation: role.designation,
+          mobile: role.mobile,
+        }));
+        onLogin('role');
+        return;
+      }
+
+      // Try member login
+      const res = await api.post("/api/v1/members/login", { email: email.trim().toLowerCase(), password });
+      const token = res.data?.token;
+      const member = res.data?.data;
+      if (!token || !member) throw new Error("Invalid response");
+
+      // Decode JWT to extract _id
+      const decoded = decodeJWT(token);
+      const userId = decoded._id || decoded.id || member._id;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("userType", "member");
+      localStorage.setItem("user", JSON.stringify({
+        _id: userId,
+        name: member.repName || member.name || member.companyName || "Member",
+        email: member.loginEmail || email,
+        membershipId: member.membershipId,
+        companyName: member.companyName || member.name,
+        designation: member.repDesignation || "",
+        mobile: member.repMobile || member.contact?.mobile1 || "",
+        state: member.state || "",
+        roleCategory: "general",
+      }));
+      onLogin('member');
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || "Invalid email or password";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

@@ -191,10 +191,20 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
 
 
 
+  const generatePassword = (name: string): string => {
+    const clean = name.trim().split(" ")[0].replace(/[^a-zA-Z]/g, "");
+    const base = clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase();
+    const specials = ["@", "#", "$", "!"];
+    const special = specials[Math.floor(Math.random() * specials.length)];
+    const num = Math.floor(100 + Math.random() * 900);
+    return `${base}${special}${num}`;
+  };
+
   const handleSubmit = async () => {
     if (!validate()) return;
     try {
       setLoading(true);
+      const password = generatePassword(formData.repName);
       await api.post("/api/v1/members/create-member", {
         membershipId,
         state: formData.state,
@@ -220,8 +230,11 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
         addRepMobile: formData.addRepMobile,
         addRepEmail: formData.addRepEmail,
         windDetails: windRows,
+        // member login credentials
+        loginEmail: formData.repEmail,
+        loginPassword: password,
       });
-      toast.success("Member registered successfully");
+      toast.success(`Member registered! Login credentials sent to ${formData.repEmail}`);
       onClose();
     } catch (error: any) {
       toast.error(error?.response?.data?.message || "Failed to create member");
@@ -455,6 +468,7 @@ export default function AddNewMember({ onClose, initialData }: { onClose: () => 
                   placeholder="email@example.com"
                 />
                 {errors.repEmail && <p className="text-xs text-[#FB2C36] mt-1">{errors.repEmail}</p>}
+                <p className="text-xs text-[#1F7A4D] mt-1">⚡ This email will be used as the member login. An auto-generated password will be sent here.</p>
               </div>
             </div>
           </Section>

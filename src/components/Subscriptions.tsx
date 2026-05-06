@@ -126,11 +126,20 @@ export default function Subscriptions() {
     fetch();
   }, []);
 
+  const getMembershipStatus = (m: Member) => {
+    if (m.status === "Active" || m.status === "Expired" || m.status === "Pending Renewal") return m.status;
+    const expiry = m.certificateValidTill || m.expiryDate;
+    if (!expiry) return "Active";
+    const diff = (new Date(expiry).getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+    if (diff < 0) return "Expired";
+    if (diff <= 90) return "Pending Renewal";
+    return "Active";
+  };
+
   const getPaymentStatus = (m: Member) => {
-    const received = m.payment?.totalReceived ?? 0;
-    const due = m.billing?.netReceivable ?? 0;
-    if (due === 0 && received === 0) return "Pending";
-    return received >= due ? "Paid" : "Pending";
+    if (m.payment?.receiptNo?.trim()) return "Paid";
+    if ((m.payment?.totalReceived ?? 0) > 0) return "Paid";
+    return "Pending";
   };
 
   const expiringIn90 = members.filter(m => {
@@ -140,7 +149,7 @@ export default function Subscriptions() {
   }).length;
 
   const stats = [
-    { label: "Active Subscriptions", value: members.filter(m => m.status === "Active" && getPaymentStatus(m) === "Paid").length, color: "#1F7A4D", bg: "#d0fae5" },
+    { label: "Active Subscriptions", value: members.filter(m => getPaymentStatus(m) === "Paid").length, color: "#1F7A4D", bg: "#d0fae5" },
     { label: "Expiring Soon (90 days)", value: expiringIn90, color: "#f59e0b", bg: "#fef3c7" },
     { label: "Pending Renewals", value: members.filter(m => getPaymentStatus(m) === "Pending").length, color: "#f59e0b", bg: "#fef3c7" },
     { label: "Total Revenue (This Year)", value: `₹${members.reduce((sum, m) => sum + (m.payment?.totalReceived ?? 0), 0).toLocaleString("en-IN")}`, color: "#155DFC", bg: "#dbeafe" },
@@ -151,7 +160,7 @@ export default function Subscriptions() {
       m.companyName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       m.membershipId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       m.billing?.invoiceNo?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || m.status === statusFilter;
+    const matchesStatus = statusFilter === "all" || getMembershipStatus(m) === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -267,7 +276,7 @@ export default function Subscriptions() {
                 ) : (
                   pagedMembers.map((m) => {
                     const payStatus = getPaymentStatus(m);
-                    const statusStyle = getStatusStyle(m.status);
+                    const statusStyle = getStatusStyle(getMembershipStatus(m));
                     const payStyle = getPaymentStyle(payStatus);
                     return (
                       <tr key={m._id} className="hover:bg-gray-50">
@@ -283,7 +292,7 @@ export default function Subscriptions() {
                         </td>
                         <td className="px-6 py-4">
                           <span className="px-2.5 py-1 text-xs rounded" style={{ backgroundColor: statusStyle.bg, color: statusStyle.text }}>
-                            {m.status || "Unknown"}
+                            {getMembershipStatus(m)}
                           </span>
                         </td>
                         <td className="px-6 py-4">
